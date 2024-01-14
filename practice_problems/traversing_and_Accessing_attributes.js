@@ -88,3 +88,11 @@ console.log(images.length);                      // 48 total images
 let pngCount = images.filter(img => img.getAttribute('src').match(/png$/)).length;
 
 console.log(pngCount);                           // 23 images in png format
+
+// 6
+
+walk(document, node => {
+  if (node instanceof HTMLAnchorElement) {
+    node.style.color = 'red';
+  }
+});
