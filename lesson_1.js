@@ -36,3 +36,129 @@
 //   </body>
 // </html>
 
+// Finding DOM Nodes
+
+// Problems Group 1
+
+// 1 
+
+function walk(node, callback) {
+  callback(node);
+
+  for (let index = 0; index < node.childNodes.length; index += 1) {
+    walk(node.childNodes[index], callback);
+  }
+};
+
+let paragraphs = [];
+
+walk(document, node => {
+  if (node.nodeName === 'P') {
+    paragraphs.push(node);
+  }
+});
+
+// LS Solution 
+
+function findAllParagraphs() {
+  let matches = [];
+  let nodes = document.body.childNodes;
+
+  for (let index = 0; index < nodes.length; index += 1) {
+    if (nodes[index] instanceof HTMLParagraphElement) {
+      matches.push(nodes[index]);
+    }
+  }
+
+  return matches;
+}
+
+console.log(findAllParagraphs());
+
+// 2
+
+function walk(node, callback) {
+  callback(node);
+
+  for (let index = 0; index < node.childNodes.length; index += 1) {
+    walk(node.childNodes[index], callback);
+  }
+};
+
+let paragraphs = [];
+
+walk(document, node => {
+  if (node.nodeName === 'P') {
+    node.classList.add('article-text');
+  }
+});
+
+//LS Solution
+
+function addClassToParagraphs(node) {
+  if (node instanceof HTMLParagraphElement) {
+    node.classList.add("article-text");
+  }
+
+  let nodes = node.childNodes;
+  for (let index = 0; index < nodes.length; index += 1) {
+    addClassToParagraphs(nodes[index]);
+  }
+}
+
+addClassToParagraphs(document.body);
+
+// 3
+
+function walk(node, callback) {
+  callback(node);
+
+  for (let index = 0; index < node.childNodes.length; index += 1) {
+    walk(node.childNodes[index], callback);
+  }
+};
+
+function getElementsByTagName(tagName) {
+  let matches = [];
+
+  walk(document.body, node => {
+    if (node.nodeName.toLowerCase() === tagName) {
+      matches.push(node);
+    }
+  });
+
+  return matches;
+};
+
+getElementsByTagName('p').forEach(el => el.classList.add('article-text'));
+
+// Problems Group 2
+
+// 1
+
+let paragraphs = document.getElementsByTagName('p');
+for (let index = 0; index < paragraphs.length; index += 1) {
+  paragraphs[index].classList.add('article-text');
+}
+
+// 2
+let paragraphs = document.getElementsByTagName('p');
+
+paragraphs = Array.prototype.slice.call(paragraphs, 0);
+
+paragraphs.forEach(p => {
+  if (p.parentElement.classList.contains('intro')) {
+    p.classList.add('article-text')
+  }
+});
+
+// LS Solution
+
+let intros = document.getElementsByClassName("intro");
+for (let index = 0; index < intros.length; index += 1) {
+  let paragraphs = intros[index].getElementsByTagName("p");
+
+  for (let p = 0; p < paragraphs.length; p += 1) {
+    paragraphs[p].classList.add("article-text");
+  }
+}
