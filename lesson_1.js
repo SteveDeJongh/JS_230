@@ -162,3 +162,13 @@ for (let index = 0; index < intros.length; index += 1) {
     paragraphs[p].classList.add("article-text");
   }
 }
+
+// Solution using css query selectors `querySelector` or `querySelectorAll`
+// These selectors require appending `class`s with `.`, id's with `#`, tagnames are not appended by anthing.
+
+let paragraphs = document.querySelectorAll('.intro p');
+
+for (let i = 0; i < paragraphs.length; i += 1) {
+  paragraphs[i].classList.add('article-text');
+}
+
