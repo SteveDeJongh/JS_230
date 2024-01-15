@@ -172,3 +172,26 @@ for (let i = 0; i < paragraphs.length; i += 1) {
   paragraphs[i].classList.add('article-text');
 }
 
+// Creating a Moving DOM Nodes
+
+// <!doctype html>
+// <html lang="en-US">
+//   <head>
+//     <title>Empty Page</title>
+//   </head>
+//   <body>
+//   </body>
+// </html>
+
+// Add a paragraph
+
+let paragraph = document.createElement('p');
+paragraph.textContent = 'This is a test.';
+document.body.appendChild(paragraph);
+
+// Alternatively
+
+let text = document.createTextNode('This is a test.');
+let paragraph2 = document.createElement('p');
+paragraph2.appendChild(text);
+document.body.appendChild(paragraph2);
