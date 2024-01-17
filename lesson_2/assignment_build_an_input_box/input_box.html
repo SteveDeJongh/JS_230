@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Input Box</title>
+    <style>
+      .text-field {
+        border: solid 1px #ccc;
+        padding: 1em;
+        cursor: pointer;
+        font-family: sans-serif;
+        font-size: 18px;
+        overflow: hidden;
+        width: 300px; 
+      }
+
+      .text-field .content {
+        display: inline-block;
+        height: 21px;
+        float: left;
+        white-space: pre;
+      }
+
+      .text-field.focused {
+        border-color: black;
+      }
+
+      .text-field.cursor .content {
+        border-right: solid 2px black;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let textFieldEl = document.querySelector('.text-field');
+        
+        function toggleCursor() {
+          textFieldEl.classList.toggle('cursor');
+        }
+
+        let cursorInterval;
+
+        textFieldEl.addEventListener('click', event => {
+          event.stopPropagation();
+          textFieldEl.classList.add('focused');
+
+          cursorInterval = setInterval(toggleCursor, 500);
+        });
+
+        document.addEventListener('keydown', event => {
+          if (textFieldEl.classList.contains('focused')) {
+            let contentEl = textFieldEl.querySelector('.content');
+            let key = event.key;
+            
+            if (key === 'Backspace') {
+              contentEl.textContent = contentEl.textContent.slice(0, contentEl.textContent.length - 1);
+            } else {
+              contentEl.textContent += event.key;
+            }
+          };
+        });
+
+        document.addEventListener('click', event => {
+          clearInterval(cursorInterval);
+          if (textFieldEl.classList.contians('focused')) {
+            textFieldEl.classList.remove('focused');
+            textFieldEl.classList.remove('cursor');
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="text-field">
+      <div class="content"></div>
+    </div>
+  </body>
+</html>

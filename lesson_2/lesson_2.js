@@ -270,3 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Assignment: Guessing Game
 
+// ./aassignment_guessing_game/game.html
+
+// Assignment: Build an input box
+
