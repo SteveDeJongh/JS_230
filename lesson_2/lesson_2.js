@@ -264,3 +264,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Preventing Propagation and Default Behaviors
 
+// Event Delegation
+
+// What is the event Loop?
+
+// Assignment: Guessing Game
+

@@ -108,7 +108,7 @@
   </body>
 </html> -->
 
-<html>
+<!-- <html>
   <head>
     <style>
       /* #elem1 {
@@ -205,14 +205,14 @@
     </script>
   </head>
   <body>
-    <!-- <div id="elem1">1
+   <div id="elem1">1
       <div id="elem2">2
         <div id="elem3">3
           <div id="elem4">4
           </div>
         </div>
       </div>
-    </div>     -->
+    </div> 
     <div class="d1 pick">1
       <main class="d2 pick">2
         <div class="d3">3
@@ -221,5 +221,69 @@
         </div>  
       </main>
     </div>
+  </body>
+</html> -->
+
+<html>
+  <head>
+    <style>
+      #message {
+        padding: .5em .8em;
+        background-color: lightyellow;
+        display: inline-block;
+      }
+
+      a.highlight {
+        color: green;
+      }
+    </style>
+    <script>
+      // function clickHandler(event) {
+      //   let message = document.getElementById('message');
+      //   message.textContent = `${event.target.textContent} was clicked!`;
+      // }
+
+      // document.addEventListener('DOMContentLoaded', () => {
+        // let buttons = document.querySelectorAll('button');
+
+        // for (let index = 0; index < buttons.length; index += 1) {
+        //   buttons[index].addEventListener('click', clickHandler);
+        // }
+      // });
+      // document.addEventListener('click', event => {  
+      //     if (event.target.tagName === 'BUTTON') {
+      //       let message = document.getElementById('message');
+      //       message.textContent = `${event.target.textContent}  was clicked!`;
+      //     }
+      //   });
+      document.addEventListener('click', event => {
+        let tag = event.target.tagName;
+        
+        if (tag === 'BUTTON') {
+          let message = document.getElementById('message');
+          message.textContent = `${event.target.textContent} was clicked!`;
+        } else if (tag === 'A') {
+          event.preventDefault();
+          event.target.classList.toggle('highlight');
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <button>One</button>
+    <button>Two</button>
+    <a href="#">Three</a>
+    <a href="#">Four</a>
+    
+    <div>
+      <p>
+        <button>Five</button>
+        <button>Six</button>
+        <a href="#">Seven</a>
+        <a href="#">Eight</a>
+      </p>
+    </div>
+    
+    <div id="message"></div>
   </body>
 </html>
