@@ -1,0 +1,156 @@
+<!doctype html>
+<!-- <html lang="en-US">
+  <head>
+    <title>title</title>
+    <meta charset="UTF-8">
+    <script>
+      document.addEventListener('DOMContentLoaded', event => {
+        let addButton = document.getElementById('add');
+        let output = document.getElementById('output');
+        let count = 0;
+
+        addButton.addEventListener('click', event => {
+          count += 1;
+          output.textContent = String(count);
+        });
+      });
+    </script>
+  </head>
+
+  <body>
+    <p>
+      <span id="output">0</span>
+      <button id="add">Add One</button>
+    </p>
+  </body>
+</html> -->
+<!-- <html>
+  <head>
+    <title>Test Page</title>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        let button = document.getElementById("alert");
+        button.addEventListener("click", (event) => {
+          let message = document.getElementById("message").value;
+          alert(message);
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <textarea id="message"></textarea>
+    <button id="alert">Alert</button>
+  </body>
+</html> -->
+<!-- <html>
+  <head>
+    <style>
+      .x {
+        position: absolute;
+        transform: rotate(45deg);
+        top: 20px;
+        left: 20px;
+      }
+
+      .x .horizontal {
+        width: 45px;
+        height: 5px;
+        position: absolute;
+        left: -20px;
+        background: red;
+      }
+
+      .x .vertical {
+        height: 45px;
+        width: 5px;
+        background: red;
+        position: absolute;
+        left: 0px;
+        top: -20px;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('mouseover', event => {
+          let x = document.querySelector('.x');
+          x.style.left = String(event.clientX) + 'px'; 
+          x.style.top = String(event.clientY) + 'px';
+        });
+
+        document.addEventListener('keyup', event => {
+          let key = event.key;
+          let color;
+
+          if (key === 'b') {
+            color = 'blue';
+          } else if (key === 'g') {
+            color = 'green';
+          } else if (key === 'r') {
+            color = 'red';
+          }
+
+          if (color) {
+            let x = document.querySelector('.x');
+            for (let index = 0; index < x.children.length; index += 1) {
+              let child = x.children[index];
+              child.style.background = color;
+            }
+          }
+        })
+      })
+    </script>
+  </head>
+  <body>
+    <div class="x">
+      <div class="horizontal"></div>
+      <div class="vertical"></div>
+    </div> 
+  </body>
+</html> -->
+
+<html>
+  <head>
+    <style>
+      .composer {
+        background: #f5f5f5;
+        padding:  1em;
+        width:  30em;
+      }
+
+      .composer textarea {
+        width: 100%;
+        height: 4em;
+      }
+
+      .composer textarea.invalid {
+        color: red;
+      }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('keyup', event => {
+        let textBox = document.body.getElementsByTagName('TEXTAREA');
+
+        let charCount = textBox[0].value.length;
+        let remainingChars = 140 - charCount;
+        let invalid = remainingChars < 140;
+        if (charCount > 0) {
+          let para = document.body.getElementsByTagName('p')[0];
+          para.textContent = `${remainingChars} characters remaining.`;
+        }
+        if (remainingChars < 0) {
+          textBox[0].style.color = 'red';
+          document.querySelector('button').disabled = invalid;
+        }
+      })
+    })
+    </script>
+  </head>
+  <body>
+    <div class="composer">
+      <textarea placeholder="Enter your message"></textarea>
+      <p class="counter"></p>
+      <button type="submit">Post Message</button>
+    </div>
+  </body>
+</html>
