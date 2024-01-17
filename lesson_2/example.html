@@ -111,46 +111,115 @@
 <html>
   <head>
     <style>
-      .composer {
-        background: #f5f5f5;
-        padding:  1em;
-        width:  30em;
+      /* #elem1 {
+        background-color: green;
+        position: relative;
+        width: 200px;
+        height: 200px;
+        text-align: center;
+        cursor: pointer;
       }
 
-      .composer textarea {
-        width: 100%;
-        height: 4em;
+      #elem2 {
+        background-color: blue;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        width: 150px;
+        height: 150px;
       }
 
-      .composer textarea.invalid {
-        color: red;
+      #elem3 {
+        background-color: red;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        width: 100px;
+        height: 100px;
+        line-height: 25px;
       }
+
+      #elem4 {
+        background-color: yellow;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+      } */
+
+
+.d1 {
+  background-color: green;
+  position: relative;
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.d2 {
+  background-color: blue;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 150px;
+  height: 150px;
+}
+
+.d3 {
+  background-color: red;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 100px;
+  height: 100px;
+  line-height: 25px;
+}
+
+.d4 {
+  background-color: yellow;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+}
     </style>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      document.addEventListener('keyup', event => {
-        let textBox = document.body.getElementsByTagName('TEXTAREA');
+      document.addEventListener('DOMContentLoaded', () => {
+        let divs = document.querySelectorAll('.pick');
 
-        let charCount = textBox[0].value.length;
-        let remainingChars = 140 - charCount;
-        let invalid = remainingChars < 140;
-        if (charCount > 0) {
-          let para = document.body.getElementsByTagName('p')[0];
-          para.textContent = `${remainingChars} characters remaining.`;
+        for(let index = 0; index < divs.length; index += 1) {
+          divs[index].addEventListener('click', highlightThis, true);
         }
-        if (remainingChars < 0) {
-          textBox[0].style.color = 'red';
-          document.querySelector('button').disabled = invalid;
+            
+        function highlightThis(e) {
+          alert(`${this.className} ${e.currentTarget.tagName}`);
         }
+
+        document.querySelector('.d3').addEventListener('click', highlightThis, false);
       })
-    })
     </script>
   </head>
   <body>
-    <div class="composer">
-      <textarea placeholder="Enter your message"></textarea>
-      <p class="counter"></p>
-      <button type="submit">Post Message</button>
+    <!-- <div id="elem1">1
+      <div id="elem2">2
+        <div id="elem3">3
+          <div id="elem4">4
+          </div>
+        </div>
+      </div>
+    </div>     -->
+    <div class="d1 pick">1
+      <main class="d2 pick">2
+        <div class="d3">3
+          <section class="d4 pick">4
+          </section>
+        </div>  
+      </main>
     </div>
   </body>
 </html>

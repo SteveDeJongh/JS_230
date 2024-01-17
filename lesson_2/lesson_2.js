@@ -117,7 +117,7 @@ function stopCounting() {
 }
 */
 // The Event Object
-
+/*
 // 1
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -212,3 +212,55 @@ document.addEventListener('DOMContentLoaded', () => {
   
   updateCounter();
 });
+*/
+
+// Capturing and Bubbling (1)
+/*
+// 1
+
+document.addEventListener('DOMContentLoaded', () => {
+  let elem4 = document.querySelector('#elem4');
+  let elem1 = document.querySelector('#elem1');
+
+  elem4.addEventListener('click', event => alert(event.currentTarget.id), true);
+  elem1.addEventListener('click', event => alert(event.currentTarget.id));
+});
+
+// 2
+
+// Alerts: d1 pick, div
+// Alerts: d2 pick, main
+// Alerts: d4 pick, section
+
+// adding : document.querySelector('.d3').addEventListener('click', highlightThis, false);
+// The d3 alert will occur last, as we only trigger the event listener on the bubbling phase.
+
+// 3
+
+// Only 2 alert boxes.
+
+*/
+
+// Capturing and Bubbling (2)
+
+// 1
+// click event listener on the div element listening on the bubbling phase that alerts tagname of the target
+// click event listener on the div element listening on the bubbling phase that alert tagname of the currenttargert
+
+// 2
+// click event listener on the capturing phase alerts "capturing" on the div element (2nd defined event handler)
+// click event listener on the bubbling phase alerts 'bubbling' on the div element
+
+// 3
+// click event listener listening on the bubbling phase alerts 'event.target.tagName' = div on div#elem1 element (2nd event handler)
+// keypress event listener on the bubbling phase alerts 'event.code' on document 1st event handler
+// keypress event listener on the bubbling phase alerts 'event.code' on document 1st event handler
+// click event listener on the bubbling phase alerts 'event.target.tagName' = main on div#elem1
+
+// The click event listener listening on the bubbling phase on the div#elem1 element that alerts the tagName of the target element (the second event handler).
+// The keypress event listener listening on the bubbling phase on document that alerts the code of the keyboard key that was pressed (the first event handler).
+// The keypress event listener listening on the bubbling phase on document that alerts the code of the keyboard key that was pressed (the first event handler).
+// The click event listener listening on the bubbling phase on the div#elem1 element that alerts the tagName of the target element (the second event handler).
+
+// Preventing Propagation and Default Behaviors
+
