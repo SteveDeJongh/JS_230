@@ -289,3 +289,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Promise Basics
 
+// Promise API
+
