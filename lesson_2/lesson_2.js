@@ -278,11 +278,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Callbacks
 
-function doHomework(subject, callback) {
-  alert(`Starting my ${subject} homework.`);
-  callback();
-}
+// function doHomework(subject, callback) {
+//   alert(`Starting my ${subject} homework.`);
+//   callback();
+// }
 
-doHomework("math", function () {
-  alert("Finished my homework");
-});
+// doHomework("math", function () {
+//   alert("Finished my homework");
+// });
+
+// Promise Basics
+
