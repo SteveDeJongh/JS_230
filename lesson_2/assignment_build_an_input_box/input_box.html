@@ -31,18 +31,17 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         let textFieldEl = document.querySelector('.text-field');
+        let cursorInterval;
         
         function toggleCursor() {
           textFieldEl.classList.toggle('cursor');
         }
 
-        let cursorInterval;
-
         textFieldEl.addEventListener('click', event => {
           event.stopPropagation();
           textFieldEl.classList.add('focused');
 
-          cursorInterval = setInterval(toggleCursor, 500);
+          cursorInterval = cursorInterval || setInterval(toggleCursor, 500);
         });
 
         document.addEventListener('keydown', event => {
@@ -52,7 +51,7 @@
             
             if (key === 'Backspace') {
               contentEl.textContent = contentEl.textContent.slice(0, contentEl.textContent.length - 1);
-            } else {
+            } else if (key.length === 1) {
               contentEl.textContent += event.key;
             }
           };
@@ -60,7 +59,9 @@
 
         document.addEventListener('click', event => {
           clearInterval(cursorInterval);
-          if (textFieldEl.classList.contians('focused')) {
+          cursorInterval = null;
+          
+          if (textFieldEl.classList.contains('focused')) {
             textFieldEl.classList.remove('focused');
             textFieldEl.classList.remove('cursor');
           }

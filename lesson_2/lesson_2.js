@@ -270,7 +270,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Assignment: Guessing Game
 
-// ./aassignment_guessing_game/game.html
+// ./assignment_guessing_game/game.html
 
 // Assignment: Build an input box
 
+// ./assignment_build_an_input_box/input_box.html
+
+// Callbacks
+
+function doHomework(subject, callback) {
+  alert(`Starting my ${subject} homework.`);
+  callback();
+}
+
+doHomework("math", function () {
+  alert("Finished my homework");
+});
