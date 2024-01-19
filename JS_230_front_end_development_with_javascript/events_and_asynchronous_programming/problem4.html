@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Buggy Code</title>
+    <style>
+      img {
+        display: block;
+        width: 15%;
+        margin-top: 10px;
+        cursor: auto;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('img').addEventListener('click', event => {
+          event.preventDefault();
+        }, false);
+      });
+    </script>
+  </head>
+  <body>
+    <a href="https://www.launchschool.com">
+      Home
+      <img src="https://d24f1whwu8r3u4.cloudfront.net/assets/launch-logo-b6d01bd15ee9da31457ee3c315845718823aa8a741858be598ab35042a312348.svg" />
+    </a>
+  </body>
+</html>
