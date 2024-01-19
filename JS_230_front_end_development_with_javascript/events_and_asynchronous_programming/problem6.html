@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Selection Filters</title>
+    <style>
+
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let classifications = document.querySelector('#animal-classifications');
+        let animals = document.querySelector('#animals');
+        let optionLists = {
+          classifications: {
+            Vertebrate: ['Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich'],
+            'Warm-blooded': ['Bear', 'Whale', 'Ostrich'],
+            'Cold-blooded': ['Salmon', 'Turtle'],
+            Mammal: ['Bear', 'Whale'],
+            Bird: ['Ostrich'],
+            Classifications: ['Animals', 'Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich'],
+          },
+          animals: {
+            Bear: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+            Turtle: ['Vertebrate', 'Cold-blooded'],
+            Whale: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+            Salmon: ['Vertebrate', 'Cold-blooded'],
+            Ostrich: ['Vertebrate', 'Warm-blooded', 'Bird'],
+            Animals: ['Classifications', 'Vertebrate', 'Warm-blooded', 'Cold-blooded', 'Mammal', 'Bird'],
+          },
+        }
+
+        function toggleHidden(option, val) {
+          option.hidden = val;
+        }
+
+        classifications.addEventListener('change', (event) => {
+          let options = Array.prototype.slice.call(classifications.children, 0);
+          let selected = event.target.value;
+
+          let remBirds = optionLists.classifications[selected];
+
+          Array.prototype.slice.call(animals.children, 0).forEach(animal => {
+            if (remBirds.includes(animal.value)) {
+              toggleHidden(animal, false);
+            } else {
+              toggleHidden(animal, true);
+            }
+          });
+        });
+
+        animals.addEventListener('change', (event) => {
+          let options = Array.prototype.slice.call(animals.children, 0);
+          let selected = event.target.value;
+
+          let remClasses = optionLists.animals[selected];
+
+          Array.prototype.slice.call(classifications.children, 0).forEach(aniClass => {
+            if (remClasses.includes(aniClass.value)) {
+              toggleHidden(aniClass, false);
+            } else {
+              toggleHidden(aniClass, true);
+            }
+          });
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <form id="selection-filters" method="post" action="#">
+      <select id="animal-classifications">
+        <option value="Classifications" selected>Classifications</option>
+        <option value="Vertebrate">Vertebrate</option>
+        <option value="Warm-blooded">Warm-blooded</option>
+        <option value="Cold-blooded">Cold-blooded</option>
+        <option value="Mammal">Mammal</option>
+        <option value="Bird">Bird</option>
+      </select>
+      <select id="animals">
+        <option value="Animals" selected>Animals</option>
+        <option value="Bear">Bear</option>
+        <option value="Turtle">Turtle</option>
+        <option value="Whale">Whale</option>
+        <option value="Salmon">Salmon</option>
+        <option value="Ostrich">Ostrich</option>    
+      </select>
+      <button id="clear">Clear</button>  
+    </form>
+  </body>
+</html>
+
+<script>
+// LS Solution
+
+const linkedOptions = {
+  classifications: {
+    Vertebrate: ['Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich'],
+    'Warm-blooded': ['Bear', 'Whale', 'Ostrich'],
+    'Cold-blooded': ['Salmon', 'Turtle'],
+    Mammal: ['Bear', 'Whale'],
+    Bird: ['Ostrich'],
+    Classifications: ['Animals', 'Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich'],
+  },
+  animals: {
+    Bear: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+    Turtle: ['Vertebrate', 'Cold-blooded'],
+    Whale: ['Vertebrate', 'Warm-blooded', 'Mammal'],
+    Salmon: ['Vertebrate', 'Cold-blooded'],
+    Ostrich: ['Vertebrate', 'Warm-blooded', 'Bird'],
+    Animals: ['Classifications', 'Vertebrate', 'Warm-blooded', 'Cold-blooded', 'Mammal', 'Bird'],
+  },
+};
+
+const animalClassifications = document.querySelector('#animal-classifications');
+const animals = document.querySelector('#animals');
+const clearFiltersBtn = document.querySelector('#clear');
+let animalClassificationsValue;
+let animalsValue;
+
+function setOptions({options}, filters) {
+  options.length = 0;
+  filters.forEach((value, index) => {
+    options[index] = new Option(value)
+  });
+}
+
+function setDefault(event) {
+  event.preventDefault();
+  setOptions(animalClassifications, ['Classifications', 'Vertebrate', 'Warm-blooded', 'Cold-blooded', 'Mammal', 'Bird']);
+  setOptions(animals,  ['Animals', 'Bear', 'Turtle', 'Whale', 'Salmon', 'Ostrich']);  
+}
+
+animalClassifications.addEventListener('change', event => {
+  animalClassificationsValue = animalClassifications.options[animalClassifications.selectedIndex].value
+  setOptions(animals, linkedOptions['classifications'][animalClassificationsValue])
+});
+
+animals.addEventListener('change', event => {
+  animalsValue = animals.options[animals.selectedIndex].value
+  setOptions(animalClassifications, linkedOptions['animals'][animalsValue])
+});
+
+clearFiltersBtn.addEventListener('click', setDefault);
+</script>
