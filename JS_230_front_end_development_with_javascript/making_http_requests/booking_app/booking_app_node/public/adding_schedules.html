@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Adding Schedules</title>
+    <style>
+      dl {
+          border: 3px double #ccc;
+          padding: 0.5em;
+      }
+      dt {
+          float: left;
+          clear: left;
+          width: 100px;
+          text-align: right;
+          font-weight: bold;
+          color: #f0595b;
+      }
+      dt::after {
+          content: ":";
+      }
+      dd {
+          margin: 0 0 0 110px;
+          padding: 0 0 0.5em 0;
+      }
+
+      input[type="submit"] {
+          color: #fff;
+          background: #f0595b;
+          border-color: #f0595b;
+          border-radius: 5px;
+          width: 100px;
+          height: 50px;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let staff = [];
+        function populateStaff() {
+          let request = new XMLHttpRequest();
+
+          request.open('GET', 'http://localhost:3000/api/staff_members');
+          request.responseType = 'json';
+
+          request.addEventListener('load', e => {
+            let selectList = document.querySelector('select');
+
+            staff = request.response
+            staff.forEach(member => {
+              let optionEl = document.createElement('option');
+              optionEl.setAttribute('value', member.id);
+              optionEl.innerText = member.name;
+              selectList.appendChild(optionEl);
+            })
+          })
+
+          request.send();
+        }
+
+        let form = document.querySelector('form');
+
+        form.addEventListener('submit', e => {
+
+        })
+      
+        populateStaff();
+      })
+    </script>
+  </head>
+  <body>
+    <div>
+      <h3>Add more schedules</h3>
+    </div>
+    <div>
+      <form method="post" action="/api/staff_members">
+        <div class="newSchedule" id="1">
+          <h3>Schedule 1</h3>
+          <dl>
+            <dt>
+              <label for="staffName">Staff Name: </label>
+            </dt>
+            <dd>
+              <select class="staffnames" name="staffName">
+
+              </select>
+            </dd>
+            <dt>
+              <label for="date">Date: </label>
+            </dt>
+            <dd>
+              <input type="date" id="date" name="date">
+            </dd>
+            <dt>
+              <label for="time">Time: </label>
+            </dt>
+            <dd>
+              <input type="time" id="time" name="time">
+            </dd>
+          </dl>
+        </div>
+        <input type="submit">
+      </form>
+    </div>
+  </body>
+</html>
