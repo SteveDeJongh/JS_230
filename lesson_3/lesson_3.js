@@ -134,4 +134,4 @@ createProduct(newObj);
 
 // Cross-Domain XMLHttpRequests with CORS
 
-// Project Search Autocomplete, Part 1, 2, 
+// Project Search Autocomplete, Part 1, 2, 3, 4, 
