@@ -41,3 +41,71 @@ function retrieveSchedules() {
 }
 
 retrieveSchedules();
+
+// Further Exploration
+
+// function retrieveIndividualSchedules(staff_id) {
+//   const request = new XMLHttpRequest();
+
+//   request.open('GET', `http://localhost:3000/api/schedules/${staff_id}`);
+//   request.timeout = 15000;
+//   request.responseType = 'json';
+
+//   request.addEventListener('load', event => {
+//     console.log(request.response);
+//   });
+
+//   request.send();
+// }
+
+// retrieveIndividualSchedules(1);
+
+function retrieveByStaffIds() {
+  const request = new XMLHttpRequest();
+
+  request.open('GET', 'http://localhost:3000/api/schedules')
+  request.responseType = 'json';
+
+  request.addEventListener('load', (event) => {
+    let data = request.response
+
+    if (data.length === 0) {
+      alert('There are no schedules available.');
+      return;
+    }
+
+    const staffIds = new Set(data.map(({staff_id}) => staff_id));
+
+    const requestPromises = [];
+    for (const id of staffIds) {
+      requestPromises.push(xhrPromise(`/api/schedules/${id}`));
+    }
+
+    Promise.all(requestPromises)
+      .then(responses => {
+        const result = responses.map(schedules => {
+          let sid = schedules[0].staff_id;
+          return `staff ${sid}: ${schedules.length}`;
+      }).join('\n');
+
+      alert('Schedule counts:\n' + result);
+    })
+    .catch(errorMessage => alert(errorMessage));
+  });
+
+  request.send();
+}
+
+function xhrPromise(url) {
+  return new Promise((resolve, reject) => {
+    const request = new XMLHttpRequest();
+    request.open('GET', url);
+    request.responseType = 'json';
+
+    request.addEventListener('load', (e) => resolve(e.target.response));
+    request.addEventListener('error', () => reject('Unable to retrieve data.'));
+    request.send();
+  });
+}
+
+retrieveByStaffIds();
