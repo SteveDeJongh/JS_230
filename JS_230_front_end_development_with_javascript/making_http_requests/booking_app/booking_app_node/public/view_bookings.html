@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Viewing Bookings</title>
+    <style>
+    </style>
+    <script>
+
+      const FetchStaffInfo = () => {
+        return new Promise((resolve, reject) => {
+          let request = new XMLHttpRequest();
+          request.open('GET', '/api/staff_members');
+          request.responseType = 'json';
+          request.send();
+          request.addEventListener('load', event => {
+            if (request.status >= 200 && request.status < 400) {
+              resolve(request.response);
+            } else {
+              reject(request.response);
+            }
+          })
+        });
+      }
+
+      const FetchSchedules = () => {
+        return new Promise((resolve, reject) => {
+          let request = new XMLHttpRequest();
+          request.open('GET', '/api/schedules');
+          // request.responseType = 'json';
+          request.send();
+          request.addEventListener('load', event => {
+            if (request.status >= 200 && request.status < 400) {
+              resolve(JSON.parse(request.responseText));
+            } else {
+              reject(request.responseText);
+            }
+          })
+        });
+      }
+
+      function makeBookings(schedules, staff) {
+        let result = schedules.filter(sch => sch.student_email !== null);
+        result.forEach(sch => {
+          let staffName = staff.filter(staff => staff.id === sch.staff_id)[0].name;
+          sch['staff_name'] = staffName;
+        });
+
+        return result;
+      }
+
+      function createBookingLI(booking, parent) {
+        
+
+      }
+
+      async function init() {
+        try {
+          let [staff, schedules] = await Promise.all([FetchStaffInfo(), FetchSchedules()]);
+          let bookings = makeBookings(schedules, staff);
+          let mainList = document.querySelecto('#bookingList');
+          bookings.forEach(booking => createBookingLI(booking, mainList));
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      init();
+    </script>
+  </head>
+  <body>
+    <h3>Bookings</h3>
+    <ul id="bookingList">
+
+    </ul>
+  </body>
+</html>
+
+<!-- Notes
+Todo:
+collect all staff information (required for names in bookings);
+  fetch /api/staff_members
+
+collect all bookings (schedules that have an email attached to them);
+  fetch /api/schdules
+    filter to just ones with `student_email` data.
+
+map over all bookings
+  add 'staff_name' prop to booking
+    match staff_id to staff_members.id
+
+create <ul>
+  id to be `bookingList`
+
+create <li> element for each booking
+    li id should be `booking${booking_id}`
+    only show date
+      create a hidden ul element with a li that contains
+        staff name, student email, time
+
+create event listener for `bookingList`
+  if element is a li and direct parent is `bookingList`
+    toggle `hidden` status on that `li`'s hidden `ul`.
+  
+
+-->
