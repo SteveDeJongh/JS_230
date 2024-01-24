@@ -26,7 +26,6 @@
         return new Promise((resolve, reject) => {
           let request = new XMLHttpRequest();
           request.open('GET', '/api/schedules');
-          // request.responseType = 'json';
           request.send();
           request.addEventListener('load', event => {
             if (request.status >= 200 && request.status < 400) {
@@ -122,5 +121,7 @@ create event listener for `bookingList`
   if element is a li and direct parent is `bookingList`
     toggle `hidden` status on that `li`'s hidden `ul`.
   
+Note!
 
+This particular approach doesn't factor in the possibility of having 2 bookings for 1 date.
 -->

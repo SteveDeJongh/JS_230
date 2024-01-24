@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cancellation Page</title>
+    <style>
+    </style>
+    <script>
+      let scheduleForm;
+      let bookingForm;
+      document.addEventListener('DOMContentLoaded', () => {
+        scheduleForm = document.querySelector('#deleteSchedule');
+        bookingForm = document.querySelector('#deleteBooking');
+
+        scheduleForm.addEventListener('submit', e => {
+          e.preventDefault();
+          let xhr = new XMLHttpRequest();
+          let id = scheduleForm['schedule_id_list'].value;
+          id = encodeURIComponent(id);
+          xhr.open('DELETE', `/api/schedules/${id}`);
+          xhr.send();
+          xhr.addEventListener('load', e => {
+            if (xhr.status === 204) {
+              alert('Schedule deleted!')
+            } else {
+              alert(xhr.responseText);
+            }
+          });
+        });
+
+        bookingForm.addEventListener('submit', e => {
+          e.preventDefault();
+
+          let xhr = new XMLHttpRequest();
+          let id = bookingForm['booking_id_list'].value;
+          id = encodeURIComponent(id);
+          xhr.open('PUT', `/api/bookings/${id}`);
+          xhr.send();
+          xhr.addEventListener('load', e => {
+            if (xhr.status === 204) {
+              alert('Booking deleted!')
+            } else {
+              alert(xhr.responseText);
+            }
+          });
+        });
+      })
+
+      const FetchStaffInfo = () => {
+        return new Promise((resolve, reject) => {
+          let request = new XMLHttpRequest();
+          request.open('GET', '/api/staff_members');
+          request.responseType = 'json';
+          request.send();
+          request.addEventListener('load', event => {
+            if (request.status >= 200 && request.status < 400) {
+              resolve(request.response);
+            } else {
+              reject(request.response);
+            }
+          })
+        });
+      }
+
+      const FetchSchedules = () => {
+        return new Promise((resolve, reject) => {
+          let request = new XMLHttpRequest();
+          request.open('GET', '/api/schedules');
+          request.send();
+          request.addEventListener('load', event => {
+            if (request.status >= 200 && request.status < 400) {
+              resolve(JSON.parse(request.responseText));
+            } else {
+              reject(request.responseText);
+            }
+          })
+        });
+      }
+
+      function makeBookings(schedules, staff) {
+        let result = schedules.filter(sch => sch.student_email !== null);
+        result.forEach(sch => {
+          let staffName = staff.filter(staff => staff.id === sch.staff_id)[0].name;
+          sch['staff_name'] = staffName;
+        });
+
+        return result;
+      }
+
+      function addOptions(parent, collection, shownValues) {
+        collection.forEach(opt => {
+          let optionEl = document.createElement('option');
+          optionEl.setAttribute('value', opt.id);
+          let string = [];
+          shownValues.forEach(key => string.push(opt[key]));
+          string = string.join(' | ');
+          optionEl.innerText = string;
+          parent.appendChild(optionEl);
+        });
+      }
+
+      async function init() {
+        try {
+          let [staff, schedules] = await Promise.all([FetchStaffInfo(), FetchSchedules()]);
+          let bookings = makeBookings(schedules, staff);
+          console.log(bookings);
+          addOptions(document.querySelector('#schedule_id_list'), schedules, ['id', 'date', 'time']);
+          addOptions(document.querySelector('#booking_id_list'), bookings, ['id', 'student_email', 'date', 'staff_name']);
+        } catch(e) {
+          alert(e);
+        }       
+      }
+
+      init();
+    </script>
+  </head>
+  <body>
+    <h3>Cancellations</h3>
+
+    <form id="deleteSchedule">
+      <label for="schedule_id">Schedule ID</label><br>
+      <select id="schedule_id_list"></select>
+      <input type="submit" name="deleteScheduleSubmit">
+    </form>
+
+    <form id="deleteBooking">
+      <label for="booking_id">Bookings:</label><br>
+      <select id="booking_id_list"></select>
+      <input type="submit" name="deleteBookingSubmit">
+    </form>
+  </body>
+</html>
+
+<!--
+
+  Notes
+
+  cancel schedule
+
+  route: /api/schedules/:schedule_id method: 'DELETE'
+  params: schedule_id
+  responses:
+    204 - no content
+
+    403
+      With booking - Can not delete the scheudle. There is a booking.
+    404
+      No schedule - Schedule does not exist.
+
+  cancel booking:
+  route: /api/bookings/:booking_id method: 'PUT'
+  params: booking_id
+  responses:
+    204 - no content
+
+    404 - Not Found
+    "There is no booking on the schedule"
+
+  FE
+
+  Make selection drop down menus for cancelation forms.
+
+  schedules:
+    retrieve all schedules: `GET`, `/api/schedules'
+    response:
+      200
+        id
+        staff_id
+        date
+        time
+        student_email
+
+  bookings:
+
+
+
+-->
