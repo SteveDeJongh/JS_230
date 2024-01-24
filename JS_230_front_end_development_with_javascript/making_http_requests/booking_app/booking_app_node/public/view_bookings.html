@@ -49,15 +49,36 @@
       }
 
       function createBookingLI(booking, parent) {
-        
+        let bookingLi = document.createElement('li');
+        bookingLi.setAttribute('id', `booking${booking.id}`);
+        bookingLi.textContent = booking.date;
 
+        let infoList = document.createElement('ul');
+        infoList.setAttribute('id', `details${booking.id}`);
+        infoList.hidden = true;
+
+        let detailsLi = document.createElement('li');
+        detailsLi.setAttribute('id', `details${booking.id}info`);
+        detailsLi.textContent = `${booking.staff_name} | ${booking.student_email} | ${booking.time}`;
+
+        infoList.appendChild(detailsLi);
+        bookingLi.appendChild(infoList);
+        parent.appendChild(bookingLi);
+
+        makeEventListenerForBooking(bookingLi);
+      }
+
+      function makeEventListenerForBooking(el) {
+        el.addEventListener('click', e => {
+          el.firstElementChild.toggleAttribute('hidden');
+        })
       }
 
       async function init() {
         try {
           let [staff, schedules] = await Promise.all([FetchStaffInfo(), FetchSchedules()]);
           let bookings = makeBookings(schedules, staff);
-          let mainList = document.querySelecto('#bookingList');
+          let mainList = document.querySelector('#bookingList');
           bookings.forEach(booking => createBookingLI(booking, mainList));
         } catch (error) {
           console.log(error);
