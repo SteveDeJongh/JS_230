@@ -45,83 +45,10 @@
       }
     </style>
     <script>
-      // document.addEventListener('DOMContentLoaded', () => {
-      //   let staff = [];
-      //   function populateStaff() {
-      //     let request = new XMLHttpRequest();
 
-      //     request.open('GET', 'http://localhost:3000/api/staff_members');
-      //     request.responseType = 'json';
-
-      //     request.addEventListener('load', e => {
-      //       let selectList = document.querySelector('select');
-
-      //       staff = request.response
-      //       staff.forEach(member => {
-      //         let optionEl = document.createElement('option');
-      //         optionEl.setAttribute('value', member.id);
-      //         optionEl.innerText = member.name;
-      //         selectList.appendChild(optionEl);
-      //       })
-      //     })
-
-      //     request.send();
-      //   }
-
-      //   let form = document.querySelector('form');
-
-      //   form.addEventListener('submit', e => {
-      //     event.preventDefault();
-      //     let data = new FormData(form);
-
-      //     console.log(data.values());
-
-      //   })
-
-      //   let addButton = document.querySelector('h3');
-      //   addButton.addEventListener('click', event => {
-      //     let newSet = document.querySelector(".newSchedule").cloneNode(true);
-      //     form.lastElementChild.insertAdjacentElement('beforeBegin', newSet);
-      //   })
-      
-      //   populateStaff();
-      // })
     </script>
   </head>
   <body>
-    <!-- <div>
-      <h3>Add more schedules</h3>
-    </div>
-    <div>
-      <form method="post" action="/api/staff_members">
-        <div class="newSchedule">
-          <h3>Schedule 1</h3>
-          <dl>
-            <dt>
-              <label for="staffName">Staff Name: </label>
-            </dt>
-            <dd>
-              <select class="staffnames" name="staffName">
-
-              </select>
-            </dd>
-            <dt>
-              <label for="date">Date: </label>
-            </dt>
-            <dd>
-              <input type="date" id="date" name="date">
-            </dd>
-            <dt>
-              <label for="time">Time: </label>
-            </dt>
-            <dd>
-              <input type="time" id="time" name="time">
-            </dd>
-          </dl>
-        </div>
-        <input type="submit">
-      </form>
-    </div> -->
 
     <!-- LS Solution -->
     <script>
@@ -219,7 +146,7 @@
         document.querySelector('#schedules').appendChild(el);
       });
 
-      function fromInputsToJson() {
+      function formInputsToJson() {
         const json = [];
 
         for (let i = 0; i < scheduleCount; i += 1) {
@@ -235,7 +162,7 @@
 
       form.addEventListener('submit', event => {
         event.preventDefault();
-        const json = JSON.stringify(fromInputsToJson());
+        const json = JSON.stringify(formInputsToJson());
         const xhr = new XMLHttpRequest();
 
         xhr.open('POST', form.action);
