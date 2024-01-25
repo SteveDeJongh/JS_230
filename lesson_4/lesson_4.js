@@ -24,3 +24,4 @@ $(function() {
   });
 });
 
+// Practice Problems: jQuery Events
