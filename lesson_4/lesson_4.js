@@ -10,3 +10,17 @@
 
 // Practice Problems: Using jQuery Selectors
 
+// Read: jQuery Events
+
+// test.html
+
+$(function() {
+  let $p = $('p');
+
+  $('a').on('click', function(event) {
+    event.preventDefault();
+    let $anchor = $(this);
+    $p.text("Your favorite fruit is " + $anchor.text());
+  });
+});
+
