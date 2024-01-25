@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Grocery List</title>
+    <link rel="stylesheet" href="./groceries.css">
+    <script>
+      // document.addEventListener('DOMContentLoaded', e => {
+      //   let form = document.querySelector('form');
+
+      //   form.addEventListener('submit', e => {
+      //     e.preventDefault();
+      //     let name = document.querySelector('#name').value;
+      //     let quantity = document.querySelector('#quantity').value || 1;
+
+      //     let liEl = document.createElement('li');
+      //     liEl.textContent = quantity + ' ' + name;
+      //     document.querySelector('ul').appendChild(liEl);
+
+      //     form.reset();
+      //   })
+      // });
+
+      (function groceryListManager() {
+        class GroceryList {
+          constructor(listContainerElement) {
+            this.list = document.querySelector('ul');
+          }
+
+          addItem(name, quantity) {
+            let listItem = document.createElement('li');
+            listItem.append(`${quantity} ${name}`);
+
+            this.list.append(listItem);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', e => {
+          let form = document.querySelector('form');
+          let myGroceryList = new GroceryList('#grocery-list');
+          const getValueOf = (selector) => form.querySelector(selector).value;
+
+          form.addEventListener('submit', e => {
+            e.preventDefault();
+
+            let name = getValueOf('#name');
+            let quantity = getValueOf('#quantity') || 1;
+
+            myGroceryList.addItem(name, quantity);
+            form.reset();
+          })
+        })
+      })();
+    </script>
+  </head>
+  <body>
+    <main>
+      <form method="post" action="">
+        <fieldset>
+          <h3>Add an Item</h3>
+          <label for="item_name">Item Name</label>
+          <input type="text" id="name" name="name"><br>
+          <label for="item_quantity">Quantity</label>
+          <input type="text" id="quantity" name="quantity"><br><br>
+          <input type="submit" value="add">
+        </fieldset>
+      </form>
+      <h1>Groceries</h1>
+      <ul id="grocery-list">
+
+      </ul>
+    </main>
+  </body>
+</html>
