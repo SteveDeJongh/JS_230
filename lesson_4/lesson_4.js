@@ -25,3 +25,7 @@ $(function() {
 });
 
 // Practice Problems: jQuery Events
+
+// HTML Templating With JavaScript
+
+// Practice Problems: Handlebars Basics

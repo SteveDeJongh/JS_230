@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Handlebars Demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script id="post" type="text/x-handlebars">
+      <article>
+        <h1>{{title}}</h1>
+        <p><time>Posted on {{published}}</time></p>
+        {{{body}}}
+        <p>
+          {{#if tags}}
+            {{#each tags}}
+              {{>tag}}
+            {{/each}}
+          {{else}}
+            <p>Not tagged</p>
+          {{/if}}
+        </p>
+      </article>
+    </script>
+    <script id="tag" type="text/x-handlebars">
+      <strong>{{this}}</strong>
+    </script>
+    <script id="posts" type="text/x-handlebars">
+      {{#each posts}}
+      {{>post}}
+      {{/each}}
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        let post = {
+          title: 'Lorem ipsum dolor sit amet',
+          published: 'April 1, 2015',
+          body: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo<. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.',
+        };
+
+        post.body = '<p>' + post.body + '</p>';
+        post.tags = ['str1', 'str2', 'str3'];
+
+        let posts = [];
+        posts.push(post);
+
+        posts.push({title: 'Post2', publushed: 'Never', body: 'Nothing to report'});
+
+        let postsTemplate = Handlebars.compile($('#posts').html());
+        let postTemplate = Handlebars.compile($('#post').html());
+        let tagTemplate = Handlebars.compile($('#tag').html());
+        Handlebars.registerPartial('tag', $('#tag').html());
+        Handlebars.registerPartial('post', $('#post').html());
+
+        $('body').append(postsTemplate({posts: posts}))
+      });
+     </script>
+  </head>
+  <body>
+
+  </body>
+</html>
