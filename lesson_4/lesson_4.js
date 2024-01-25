@@ -29,3 +29,6 @@ $(function() {
 // HTML Templating With JavaScript
 
 // Practice Problems: Handlebars Basics
+
+// AJAX Requests
+
