@@ -8,40 +8,44 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
 
     <script>
-      document.addEventListener('DOMContentLoaded', e => {
-        document.querySelector('main ul').addEventListener('click', event => {
-          if (event.target.tagName !== 'A' && event.target.tagName !== 'IMG') {
-            return;
+      document.addEventListener('DOMContentLoaded', function() {
+        let modal = document.querySelector('#modal');
+        let modalLayer = document.querySelector('#modal-layer');
+        let modalTitle = modal.querySelector('h3');
+        let modalImage = modal.querySelector('img');
+        let modalText = modal.querySelector('p');
+        let teamLinks = document.querySelectorAll('#team li > a');
+
+        function showModal(event) {
+          event.preventDefault();
+          let link = event.target.closest('a');
+          modalTitle.textContent = link.dataset.name;
+          modalImage.src = link.dataset.imageSource;
+          modalImage.alt = link.dataset.name;
+          modalText.textContent = link.dataset.text;
+          modalLayer.classList.replace('hide', 'show');
+          modal.classList.replace('hide', 'show');
+        }
+
+        function hideModal(event) {
+          event.preventDefault();
+          modalTitle.textContent = '';
+          modalImage.src = '';
+          modalImage.alt = '';
+          modalText.textContent = '';
+          modalLayer.classList.replace('show', 'hide');
+          modal.classList.replace('show', 'hide');
+        }
+
+        teamLinks.forEach(link => link.addEventListener('click', showModal));
+        document.querySelector('#modal-layer').addEventListener('click', hideModal);
+        document.querySelector('#modal a.close').addEventListener('click', hideModal);
+        document.addEventListener('keyup', function(event) {
+          if (event.keyCode === 27) {
+            hideModal();
           }
-
-          let parLi = event.target.parentNode;
-          if (event.target.tagName === 'IMG') {
-            parLi = event.target.parentNode.parentNode;
-          }
-
-          $('modal').attr('display', 'none');
-
-          let [layer, cont] = [parLi.children[1], parLi.children[2]];
-          layer.style.display = 'block';
-          cont.style.display = 'block';
-          // cont.style.top = '100px';
-
-        })
-
-        // Closing modal by click on 'X'
-        $('.modal a').on('click', e => {
-          e.preventDefault();
-          e.target.parentElement.style.display = 'none';
-          e.target.parentElement.previousElementSibling.style.display = 'none';
-        })
-
-        // Closing modal when clicking outside of it.
-        $('.modal_layer').on('click', e => {
-          e.preventDefault();
-          e.target.style.display = 'none';
-          e.target.nextElementSibling.style.display = 'none';
-        })
-      })
+        });
+      });
     </script>
   </head>
   <body>
@@ -59,65 +63,40 @@
     </header>
     <main>
       <div id="team" class="column">
+        <div id="modal-layer" class="hide"></div>
+        <div id="modal" class="hide">
+          <a href="#" class="close">Close</a>
+          <img src="" alt="" />
+          <h3></h3>
+          <p></p>
+        </div>
         <article>
           <h2>Team</h2>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniadolor</p>
           <ul>
             <li>
-              <a href="#">
+              <a href="#" data-image-source="images/img_kevin.jpg" data-name="Kevin Wang" data-text="Fusce feugiat ut nisi at pulvinar. Quisque sagittis augue sit amet hendrerit pellentesque. Maecenas pellentesque tincidunt commodo. Phasellus et justo pharetra, imperdiet dui eu, dapibus velit. Suspendisse finibus ante maximus bibendum rhoncus. Etiam sit amet faucibus urna. Nulla dui turpis, interdum non sodales quis, tempus quis mi. Aenean vel ante lacinia, laoreet arcu placerat, convallis justo. Aenean sit amet fringilla nisl. Phasellus vestibulum lorem et pretium aliquam.">
                 <img src="images/img_kevin.jpg" alt="Kevin Wang" />
                 Kevin
               </a>
-              <div class="modal_layer">
-              </div>
-              <div class="modal" style="display: none">
-                <a href="#" class="close">Close</a>
-                <img src="images/img_kevin.jpg">
-                <h3>Kevin Wang</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              </div>
             </li>
             <li>
-              <a href="#">
+              <a href="#" data-image-source="images/img_louis.jpg" data-name="Louis Burton" data-text="Fusce feugiat ut nisi at pulvinar. Quisque sagittis augue sit amet hendrerit pellentesque. Maecenas pellentesque tincidunt commodo. Phasellus et justo pharetra, imperdiet dui eu, dapibus velit. Suspendisse finibus ante maximus bibendum rhoncus. Etiam sit amet faucibus urna. Nulla dui turpis, interdum non sodales quis, tempus quis mi. Aenean vel ante lacinia, laoreet arcu placerat, convallis justo. Aenean sit amet fringilla nisl. Phasellus vestibulum lorem et pretium aliquam.">
                 <img src="images/img_louis.jpg" alt="Louis Burton" />
                 Louis
               </a>
-              <div class="modal_layer">
-              </div>
-              <div class="modal" style="display: none">
-                <a href="#" class="close">Close</a>
-                <img src="images/img_louis.jpg">
-                <h3>Louis Burton</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              </div>
             </li>
             <li>
-              <a href="#">
+              <a href="#" data-image-source="images/img_kasper.jpg" data-name="Kasper Salto" data-text="Fusce feugiat ut nisi at pulvinar. Quisque sagittis augue sit amet hendrerit pellentesque. Maecenas pellentesque tincidunt commodo. Phasellus et justo pharetra, imperdiet dui eu, dapibus velit. Suspendisse finibus ante maximus bibendum rhoncus. Etiam sit amet faucibus urna. Nulla dui turpis, interdum non sodales quis, tempus quis mi. Aenean vel ante lacinia, laoreet arcu placerat, convallis justo. Aenean sit amet fringilla nisl. Phasellus vestibulum lorem et pretium aliquam.">
                 <img src="images/img_kasper.jpg" alt="Kasper Salto" />
                 Kasper
               </a>
-              <div class="modal_layer">
-              </div>
-              <div class="modal" style="display: none">
-                <a href="#" class="close">Close</a>
-                <img src="images/img_kasper.jpg">
-                <h3>Kasper Salton</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              </div>
             </li>
             <li>
-              <a href="#">
+              <a href="#" data-image-source="images/img_chris.jpg" data-name="Chris Lee" data-text="Fusce feugiat ut nisi at pulvinar. Quisque sagittis augue sit amet hendrerit pellentesque. Maecenas pellentesque tincidunt commodo. Phasellus et justo pharetra, imperdiet dui eu, dapibus velit. Suspendisse finibus ante maximus bibendum rhoncus. Etiam sit amet faucibus urna. Nulla dui turpis, interdum non sodales quis, tempus quis mi. Aenean vel ante lacinia, laoreet arcu placerat, convallis justo. Aenean sit amet fringilla nisl. Phasellus vestibulum lorem et pretium aliquam.">
                 <img src="images/img_chris.jpg" alt="Chris Lee" />
                 Chris
               </a>
-              <div class="modal_layer">
-              </div>
-              <div class="modal" style="display: none">
-                <a href="#" class="close">Close</a>
-                <img src="images/img_chris.jpg">
-                <h3>Chris Lee</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-              </div>
             </li>
           </ul>
         </article>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Fluid Layout Gallery</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="gallery.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', e => {
+        let mainImage = document.querySelector('figure img');
+        let mainCaption = document.querySelector('figure figcaption');
+        let thumbnails = document.querySelectorAll('li img');
+
+        function clearPicked() {
+          thumbnails.forEach(x => x.classList.remove('picked'));
+        }
+
+        thumbnails.forEach(thumb => thumb.addEventListener('click', e => {
+          clearPicked();
+          mainImage.setAttribute('src', event.target.src);
+          mainCaption.textContent = event.target.title;
+          event.target.classList.add('picked');
+        }));
+      })
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>My Photo Gallery</h1>
+      <figure>
+        <img src="https://via.placeholder.com/1200x900" alt="" />
+        <figcaption>Photo 1</figcaption>
+      </figure>
+      <ul>
+        <li><img class="picked" src="https://via.placeholder.com/1200x900" alt="" title="Photo 1" /></li>
+        <li><img class="" src="https://via.placeholder.com/1200x900/fff/333" alt="" title="Photo 2" /></li>
+        <li><img class="" src="https://via.placeholder.com/1200x900/66cc33/f0f0f0" alt="" title="Photo 3" /></li>
+        <li><img class="" src="https://via.placeholder.com/1200x900/993535/aaa" alt="" title="Photo 4" /></li>
+      </ul>
+    </main>
+  </body>
+</html>
