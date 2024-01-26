@@ -4,7 +4,6 @@
     <title>Inventory Order Form</title>
     <meta charset="UTF-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
     <script src="javascripts/inventory.js"></script>
     <link rel="stylesheet" href="stylesheets/form.css" />
   </head>
@@ -60,10 +59,10 @@
           </dl>
 
           <h2>Items to order</h2>
-          <script type="text/x-handlebars" id="inventory_template">
+          <script type="text/template" id="inventory_item">
             <tr>
               <td>
-                <input type="hidden" name="item_id_ID" value="{{id}}" />
+                <input type="hidden" name="item_id_ID" value="ID" />
                 <label for="item_name_ID">Name</label>
                 <input name="item_name_ID" type="text" />
               </td>
