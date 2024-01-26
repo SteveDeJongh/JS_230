@@ -9,15 +9,21 @@
         let mainImage = document.querySelector('figure img');
         let mainCaption = document.querySelector('figure figcaption');
         let thumbnails = document.querySelectorAll('li img');
+        let fade = document.querySelector('figure div');
 
         function clearPicked() {
           thumbnails.forEach(x => x.classList.remove('picked'));
         }
 
-        thumbnails.forEach(thumb => thumb.addEventListener('click', e => {
+        thumbnails.forEach(thumb => thumb.addEventListener('click', event => {
           clearPicked();
-          mainImage.setAttribute('src', event.target.src);
-          mainCaption.textContent = event.target.title;
+          fade.classList.add('fade-out-image');
+          setTimeout(() => {
+            fade.classList.remove('fade-out-image');
+            fade.classList.add('fade-in-image');
+            mainImage.setAttribute('src', event.target.src);
+            mainCaption.textContent = event.target.title;
+          }, 500)
           event.target.classList.add('picked');
         }));
       })
@@ -27,7 +33,9 @@
     <main>
       <h1>My Photo Gallery</h1>
       <figure>
-        <img src="https://via.placeholder.com/1200x900" alt="" />
+        <div class="">
+          <img src="https://via.placeholder.com/1200x900" alt="" />
+        </div>
         <figcaption>Photo 1</figcaption>
       </figure>
       <ul>
