@@ -43,50 +43,68 @@ document.addEventListener('DOMContentLoaded', e => {
 
         return found_item;
       },
-      update: function($item) {
-        var id = this.findID($item),
+      update: function(itemel) {
+        var id = this.findID(itemel),
             item = this.get(id);
 
-        item.name = $item.find("[name^=item_name]").val();
-        item.stock_number = $item.find("[name^=item_stock_number]").val();
-        item.quantity = $item.find("[name^=item_quantity]").val();
+            console.log(itemel);
+        // item.name = $item.find("[name^=item_name]").val();
+        item.name = itemel.querySelector(".item_name_ID").value;
+        // item.stock_number = $item.find("[name^=item_stock_number]").val();
+        item.stock_number = itemel.querySelector(".item_stock_number_ID").value;
+        // item.quantity = $item.find("[name^=item_quantity]").val();
+        item.quantity = itemel.querySelector(".item_quantity_ID").value;        
       },
       newItem: function(e) {
         e.preventDefault();
-        // var item = this.add(),
         let item = this.add();
         let inventory_template = Handlebars.compile(document.querySelector('#inventory_template').innerHTML);
         item = inventory_template(item);
-        // item = document.querySelector('#inventory_item').textContent.replace(/ID/g, item.id);
-        //     $item = $(this.template.replace(/ID/g, item.id));
 
-        // $("#inventory").append($item);
-        document.querySelector('#inventory').innerHtml
-        console.log(item);
+        document.querySelector('#inventory').innerHTML += item;
       },
       findParent: function(e) {
-        return $(e.target).closest("tr");
+        let el = e.target;
+
+        while (el.tagName !== 'TR') {
+          el = el.parentElement;
+        }
+
+        return el
       },
-      findID: function($item) {
-        return +$item.find("input[type=hidden]").val();
+      findID: function(item) {
+        return +item.querySelector("input[type=hidden]").value;
       },
       deleteItem: function(e) {
+        if (e.target.tagName !== 'A') {
+          return;
+        }
+
         e.preventDefault();
-        var $item = this.findParent(e).remove();
-        // let item = this.findParent(e.target);
-        // console.log(item);
-        this.remove(this.findID($item));
+        let item = this.findParent(e);
+        item.remove();
+        this.remove(this.findID(item));
       },
       updateItem: function(e) {
-        var $item = this.findParent(e);
+        // Still to do...
+        console.log('triggered now!');
 
-        this.update($item);
+        if (e.target.tagName !== 'INPUT') {
+          return;
+        }
+
+        console.log('triggered!');
+        var item = this.findParent(e);
+
+        this.update(item);
       },
       bindEvents: function() {
         // $("#add_item").on("click", this.newItem.bind(this));
         document.querySelector('#add_item').addEventListener('click', this.newItem.bind(this));
-        $("#inventory").on("click", "a.delete", $.proxy(this.deleteItem, this));
-        $("#inventory").on("blur", ":input", $.proxy(this.updateItem, this));
+        // $("#inventory").on("click", "a.delete", $.proxy(this.deleteItem, this));
+        document.querySelector('#inventory').addEventListener('click', this.deleteItem.bind(this));
+        // $("#inventory").on("blur", ":input", $.proxy(this.updateItem, this));
+        document.querySelector('#inventory').addEventListener('focus', this.updateItem.bind(this));
       },
       init: function() {
         this.setDate();
