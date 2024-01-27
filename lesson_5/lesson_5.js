@@ -16,3 +16,6 @@
 
 // Assignment: Photo Gallery Slideshow
 
+// Assignment: Refactoring
+
+// Project: Guess a Word: Part1

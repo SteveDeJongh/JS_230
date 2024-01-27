@@ -5,7 +5,7 @@ let inventory;
     lastId: 0,
     collection: [],
     setDate: function() {
-      var date = new Date();
+      let date = new Date();
       // $("#order_date").text(date.toUTCString());
       document.querySelector('#order_date').textContent = date.toUTCString();
     },
@@ -18,7 +18,7 @@ let inventory;
     },
     add: function() {
       this.lastId += 1;
-      var item = {
+      let item = {
         id: this.lastId,
         name: "",
         stock_number: "",
@@ -34,7 +34,7 @@ let inventory;
       });
     },
     get: function(id) {
-      var found_item;
+      let found_item;
 
       this.collection.forEach(function(item) {
         if (item.id === id) {
