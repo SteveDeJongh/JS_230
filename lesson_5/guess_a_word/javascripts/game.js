@@ -1,3 +1,5 @@
+let game;
+
 document.addEventListener('DOMContentLoaded', () => {
   const message = document.querySelector("#message");
   const letters = document.querySelector("#spaces");
@@ -17,11 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   class Game {
     constructor() {
-      incorrect: 0;
-      lettersGussed: [];
-      correctSpaces: 0;
-      word: this.startWord();
-      this.init()     
+      this.incorrect = 0;
+      this.lettersGuessed = [];
+      this.correctSpaces = 0;
+      this.word = this.startWord();
+      this.init();
     }
 
     startWord() {
@@ -31,9 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return this;
       }
       this.word = this.word.split('');
+      console.log
     }
 
     createBlanks() {
+      console.log(this.word);
       let spaces = (new Array(this.word.length + 1)).join("<span></span>");
     
       let spans = letters.querySelectorAll("span");
@@ -49,9 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init() {
+      console.log(this);
       this.createBlanks();
     }    
   };
 
-  new Game();
+  game = new Game();
+
+  document.addEventListener('keypress', (e) => {
+    let code = e.charCode;
+    let letter = String.fromCharCode(code);
+    if (code >= 96 && code <= 122) {
+      console.log(game);
+      // console.log(game.lettersGuessed);
+      // game.lettersGuessed.push(let);
+      // console.log(games.lettersGuessed);
+    }
+  })
 })
