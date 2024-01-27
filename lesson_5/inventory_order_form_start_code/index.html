@@ -3,7 +3,6 @@
   <head>
     <title>Inventory Order Form</title>
     <meta charset="UTF-8" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
     <script src="javascripts/inventory.js"></script>
     <link rel="stylesheet" href="stylesheets/form.css" />
@@ -60,20 +59,20 @@
           </dl>
 
           <h2>Items to order</h2>
-          <script type="text/x-handlebars" id="inventory_template">
+          <script type="text/x-handlebars" id="inventory_item">
             <tr>
               <td>
                 <input type="hidden" name="item_id_ID" value="{{id}}" />
-                <label for="item_name_ID">Name</label>
-                <input class="item_name_ID" name="item_name_ID" type="text" />
+                <label for="item_name_{{id}}">Name</label>
+                <input name="item_name_{{id}}" type="text" />
               </td>
               <td>
-                <label for="item_stock_number_ID">Stock Number</label>
-                <input class="item_stock_number_ID" name="item_stock_number_ID" type="text" maxlength="8" />
+                <label for="item_stock_number_{{id}}">Stock Number</label>
+                <input name="item_stock_number_{{id}}" type="text" maxlength="8" />
               </td>
               <td>
-                <label for="item_quantity_ID">Quantity</label>
-                <input class="item_quantity_ID" name="item_quantity_ID" type="number" value="1" />
+                <label for="item_quantity_{{id}}">Quantity</label>
+                <input name="item_quantity_{{id}}" type="number" value="1" />
               </td>
               <td>
                 <a href="#" class="delete">Delete</a>
