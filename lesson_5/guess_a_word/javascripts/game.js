@@ -1,5 +1,3 @@
-let game;
-
 document.addEventListener('DOMContentLoaded', () => {
   const message = document.querySelector("#message");
   const letters = document.querySelector("#spaces");
@@ -22,17 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
       this.incorrect = 0;
       this.lettersGuessed = [];
       this.correctSpaces = 0;
-      this.word = this.startWord();
-      this.init();
-    }
-
-    startWord() {
+      this.allowedGuesses = 6;
       this.word = randomWord();
       if (!this.word) {
-        this.displayMessage("Sorry, i've run out of words!");
+        this.displayMessage("Sorry, I've run out of words.");
+        this.hideReplayLink();
         return this;
       }
-      return this.word.split('');
+      this.word = this.word.split('');
+      this.init();
     }
 
     createBlanks() {
@@ -50,65 +46,124 @@ document.addEventListener('DOMContentLoaded', () => {
       message.textContent = text;
     }
 
-    lose() {
-      return this.incorrect >= 6;
-    }
-
-    win() {
-      return this.word.every(letter => this.lettersGuessed.includes(letter));
-    }
-
     clearGuesses() {
       [...document.querySelectorAll('#guesses span')].forEach(el => el.remove());
     }
 
+    fillBlanksFor(letter) {
+      let self = this;
+
+      this.word.forEach((l, idx) => {
+        if (l === letter) {
+          self.spaces[idx].textContent = l;
+          self.correctSpaces += 1;
+        }
+      });
+    }
+
+    renderGuess(letter) {
+      let span = document.createElement('span');
+      span.textContent = letter;
+      guesses.append(span);
+    }
+
+    renderIncorrectGuess(letter) {
+      this.incorrect += 1;
+      this.renderGuess(letter);
+      this.setClass();
+    }
+
+    setClass() {
+      apples.classList.remove(...apples.classList);
+      apples.classList.add(`guess_${this.incorrect}`);
+    }
+
+    showReplayLink() {
+      replay.classList.add("visible");
+    }
+
+    hideReplayLink() {
+      replay.classList.remove("visible");
+    }
+
+    processGuess(e) {
+      let letter = e.key;
+      if (notALetter(letter)) { return; }
+      if (this.duplicateGuess(letter)) { return; }
+
+      if (this.word.includes(letter)) {
+        this.fillBlanksFor(letter);
+        this.renderGuess(letter);
+        if (this.correctSpaces === this.spaces.length) {
+          this.win();
+        }
+      } else {
+        this.renderIncorrectGuess(letter);
+      }
+
+      if (this.incorrect === this.allowedGuesses) {
+        this.lose()
+      }
+    }
+
+    duplicateGuess(letter) {
+      let duplicate = this.lettersGuessed.indexOf(letter) !== -1;
+
+      if (!duplicate) { this.lettersGuessed.push(letter); }
+
+      return duplicate;
+    }
+
+    win() {
+      this.displayMessage('You win!');
+      this.unbind();
+      this.showReplayLink();
+      this.setGameStatus('win');
+    }
+
+    lose() {
+      this.displayMessage("Game over, you've run out of guesses");
+      this.unbind();
+      this.showReplayLink();
+      this.setGameStatus('lose');
+    }
+
+    bind() {
+      this.processGuessHandler = (e) => { this.processGuess(e)};
+      document.addEventListener('keydown', this.processGuessHandler);
+    }
+
+    unbind() {
+      document.removeEventListener('keydown', this.processGuessHandler);
+    }
+
+    setGameStatus(status) {
+      document.body.classList.remove('win', 'lose');
+      if (status) {
+        document.body.classList.add(status);
+      }
+    }
+
     init() {
+      this.bind();
+      this.setClass();
+      this.hideReplayLink();
       this.createBlanks();
       this.clearGuesses();
-    }    
+      this.setGameStatus();
+      this.displayMessage('');
+    }
+
   };
 
-  game = new Game();
+  new Game();
 
-  document.addEventListener("keydown", keyPress);
-
-  function keyPress(e) {
-    let letter = e.key;
-    if (letter >= 'a' && letter <= 'z') {
-      game.lettersGuessed.push(letter);
-      if (game.word.includes(letter)) {
-        let spans = document.querySelectorAll('#spaces span');
-        game.word.forEach((let, idx) => {
-          if (let === letter) {
-            spans[idx].textContent = let;
-          }
-        });
-      } else {
-        game.incorrect += 1;
-        let guessString = `guess_${game.incorrect}`;
-        document.querySelector('#apples').classList.add(guessString);
-      }
-      
-      let guessSpan = document.createElement('span');
-      guessSpan.textContent = letter;
-      guesses.append(guessSpan);
-
-
-    if (game.lose()) {
-      game.displayMessage("Game over, you've run out of guesses.");
-      document.removeEventListener('keydown', keyPress);
-    } else if (game.win()) {
-      game.displayMessage('You win!');
-      document.removeEventListener('keydown', keyPress);
-    }
-    }
+  function notALetter(letter) {
+    return letter < 'a' || letter > 'z';
   }
 
   replay.addEventListener('click', (e) => {
     e.preventDefault();
-    game = new Game();
-    message.textContent = '';
-    apples.classList = '';
+    new Game();
   })
-
 })
