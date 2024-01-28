@@ -58,14 +58,21 @@ document.addEventListener('DOMContentLoaded', () => {
       return this.word.every(letter => this.lettersGuessed.includes(letter));
     }
 
+    clearGuesses() {
+      [...document.querySelectorAll('#guesses span')].forEach(el => el.remove());
+    }
+
     init() {
       this.createBlanks();
+      this.clearGuesses();
     }    
   };
 
   game = new Game();
 
-  document.addEventListener("keyup", (e) => {
+  document.addEventListener("keydown", keyPress);
+
+  function keyPress(e) {
     let letter = e.key;
     if (letter >= 'a' && letter <= 'z') {
       game.lettersGuessed.push(letter);
@@ -84,17 +91,24 @@ document.addEventListener('DOMContentLoaded', () => {
       
       let guessSpan = document.createElement('span');
       guessSpan.textContent = letter;
-      document.querySelector('#guesses').append(guessSpan);
+      guesses.append(guessSpan);
 
 
     if (game.lose()) {
       game.displayMessage("Game over, you've run out of guesses.");
-    }
-
-    if (game.win()) {
+      document.removeEventListener('keydown', keyPress);
+    } else if (game.win()) {
       game.displayMessage('You win!');
+      document.removeEventListener('keydown', keyPress);
     }
     }
+  }
+
+  replay.addEventListener('click', (e) => {
+    e.preventDefault();
+    game = new Game();
+    message.textContent = '';
+    apples.classList = '';
   })
 
 })
