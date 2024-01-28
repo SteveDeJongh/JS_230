@@ -32,12 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
         this.displayMessage("Sorry, i've run out of words!");
         return this;
       }
-      this.word = this.word.split('');
-      console.log
+      return this.word.split('');
     }
 
     createBlanks() {
-      console.log(this.word);
       let spaces = (new Array(this.word.length + 1)).join("<span></span>");
     
       let spans = letters.querySelectorAll("span");
@@ -49,25 +47,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     displayMessage(text) {
-      message.text(text);
+      message.textContent = text;
+    }
+
+    lose() {
+      return this.incorrect >= 6;
+    }
+
+    win() {
+      return this.word.every(letter => this.lettersGuessed.includes(letter));
     }
 
     init() {
-      console.log(this);
       this.createBlanks();
     }    
   };
 
   game = new Game();
 
-  document.addEventListener('keypress', (e) => {
-    let code = e.charCode;
-    let letter = String.fromCharCode(code);
-    if (code >= 96 && code <= 122) {
-      console.log(game);
-      // console.log(game.lettersGuessed);
-      // game.lettersGuessed.push(let);
-      // console.log(games.lettersGuessed);
+  document.addEventListener("keyup", (e) => {
+    let letter = e.key;
+    if (letter >= 'a' && letter <= 'z') {
+      game.lettersGuessed.push(letter);
+      if (game.word.includes(letter)) {
+        let spans = document.querySelectorAll('#spaces span');
+        game.word.forEach((let, idx) => {
+          if (let === letter) {
+            spans[idx].textContent = let;
+          }
+        });
+      } else {
+        game.incorrect += 1;
+        let guessString = `guess_${game.incorrect}`;
+        document.querySelector('#apples').classList.add(guessString);
+      }
+      
+      let guessSpan = document.createElement('span');
+      guessSpan.textContent = letter;
+      document.querySelector('#guesses').append(guessSpan);
+
+
+    if (game.lose()) {
+      game.displayMessage("Game over, you've run out of guesses.");
+    }
+
+    if (game.win()) {
+      game.displayMessage('You win!');
+    }
     }
   })
+
 })
