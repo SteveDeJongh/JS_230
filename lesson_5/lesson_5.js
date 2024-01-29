@@ -18,4 +18,6 @@
 
 // Assignment: Refactoring
 
-// Project: Guess a Word: Part1
+// Project: Guess a Word: Part1 & part 2
+
+// Project: Potto Gallery - Introduction and Server Set Up
