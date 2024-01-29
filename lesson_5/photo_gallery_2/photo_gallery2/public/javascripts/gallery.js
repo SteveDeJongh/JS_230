@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', e => {
   let templates = {};
   let photos;
-  let comments;
 
   document.querySelectorAll("script[type='text/x-handlebars']").forEach(tmpl => {
     templates[tmpl["id"]] = Handlebars.compile(tmpl["innerHTML"]);
@@ -18,6 +17,7 @@ document.addEventListener('DOMContentLoaded', e => {
       renderPhotos();
       renderPhotoInformation(photos[0].id);
       getCommentsFor(photos[0].id);
+      slideshow.init();
   });
 
   function renderPhotos() {
@@ -40,5 +40,62 @@ document.addEventListener('DOMContentLoaded', e => {
         let comment_list = document.querySelector('#comments > ul');
         comment_list.insertAdjacentHTML('beforeend', templates.photo_comments({comments: comment_json}));
     });
+  };
+
+  const slideshow = {
+    prevslide: function(e) {
+      e.preventDefault();
+      let prev = this.currentSlide.previousElementSibling;
+      if (!prev) {
+        prev = this.lastSlide;
+      }
+      this.fadeOut(this.currentSlide);
+      this.fadeIn(prev);
+      this.renderPhotoContent(prev.getAttribute("data-id"));
+      this.currentSlide = prev;
+    },
+
+    nextSlide: function(e) {
+      e.preventDefault();
+      let next = this.currentSlide.nextElementSibling;
+      if (!next) {
+        next = this.firstSlide;
+      }
+      this.fadeOut(this.currentSlide);
+      this.fadeIn(next);
+      this.renderPhotoContent(next.getAttribute("data-id"));
+      this.currentSlide = next;
+    },
+
+    fadeOut: function(slide) {
+      slide.classList.add('hide');
+      slide.classList.remove('show');
+    },
+
+    fadeIn: function(slide) {
+      slide.classList.add('show');
+      slide.classList.remove('hide');
+    },
+
+    renderPhotoContent: function(idx) {
+      renderPhotoInformation(Number(idx));
+      getCommentsFor(idx);
+    },
+
+    bind: function() {
+      let prevButton = this.slideshow.querySelector('a.prev');
+      let nextButton = this.slideshow.querySelector('a.next');
+      prevButton.addEventListener('click', (e) => { this.prevslide(e) });
+      nextButton.addEventListener('click', (e) => { this.nextSlide(e) });
+    },
+    
+    init: function() {
+      this.slideshow = document.querySelector('#slideshow');
+      let slides = this.slideshow.querySelectorAll('figure');
+      this.firstSlide = slides[0];
+      this.lastSlide = slides[slides.length - 1];
+      this.currentSlide = this.firstSlide;
+      this.bind();
+    },
   };
 })
