@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', e => {
   let templates = {};
   let photos;
+  let comments;
 
   document.querySelectorAll("script[type='text/x-handlebars']").forEach(tmpl => {
     templates[tmpl["id"]] = Handlebars.compile(tmpl["innerHTML"]);
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', e => {
       photos = json;
       renderPhotos();
       renderPhotoInformation(photos[0].id);
+      getCommentsFor(photos[0].id);
   });
 
   function renderPhotos() {
@@ -30,4 +32,13 @@ document.addEventListener('DOMContentLoaded', e => {
     let header = document.querySelector('section > header');
     header.insertAdjacentHTML('beforeend', templates.photo_information(photo));
   }
+
+  function getCommentsFor(id) {
+    fetch(`/comments?photo_id=${id}`)
+      .then(response => response.json())
+      .then(comment_json => {
+        let comment_list = document.querySelector('#comments > ul');
+        comment_list.insertAdjacentHTML('beforeend', templates.photo_comments({comments: comment_json}));
+    });
+  };
 })
