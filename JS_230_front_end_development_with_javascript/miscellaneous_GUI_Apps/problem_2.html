@@ -33,6 +33,8 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
     <script>
+      const MAX_CHAR = 120;
+
       document.addEventListener('DOMContentLoaded', e => {
         const languages = [
           {
@@ -64,12 +66,18 @@
             'language in widespread use today. Only Fortran is older, by one year. Lisp has changed ' +
             'since its early days, and many dialects have existed over its history. Today, the best '+
             'known general-purpose Lisp dialects are Common Lisp and Scheme.'
+          },
+
+          {
+            name: 'C',
+            description: 'C is a short language I know nothing about yet.',
           }
         ];
 
         languages.forEach((lang, idx) => {
           lang["id"] = idx;
-          lang["shortDesc"] = lang["description"].slice(0, 120) + '...';
+          lang['button'] = (lang["description"].length > MAX_CHAR);
+          lang["shortDesc"] = lang['button'] ? lang["description"].slice(0, MAX_CHAR) + '...' : lang['description'];
         })
 
         let langTemp = Handlebars.compile(document.querySelector('#language_temp').innerHTML);
@@ -96,7 +104,9 @@
       <article id="{{id}}">
         <h3>{{name}}</h3>
         <p>{{shortDesc}}</p>
-        <button id="{{id}}_button">Show More</button>
+        {{#if button}}
+          <button id="{{id}}_button">Show More</button>
+        {{/if}}
       </article>
       {{/each}}
     </script>

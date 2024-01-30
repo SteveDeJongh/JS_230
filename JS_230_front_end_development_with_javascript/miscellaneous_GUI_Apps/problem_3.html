@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Custom Delete Confirmation Prompt</title>
+    <style>
+      body {
+        background: #226543;
+        padding: 20px;
+        color: #000;
+        font-size: 18px;
+      }
+
+      h2 {
+        color: #fff;
+      }
+
+      #todos {
+        list-style: none;
+        width: 600px;
+      }
+
+      #todos li {
+        padding: 16px 20px 0 20px;
+        box-sizing: border-box;
+        background: #fff;
+        color: #222;
+        height: 50px;
+        margin-bottom: 20px;
+        text-indent: 0;
+        border-radius: 5px;
+        position: relative;
+      }
+      .confirm_prompt {
+        display: none;
+        width: 500px;
+        height: 150px;
+        position: absolute;
+        z-index: 10;
+        top: 150px;
+        left: 50%;
+        margin-left: -200px;
+        border: 1px solid #ccc;
+        background: #eee;
+        border-radius: 4px;
+        box-sizing: border-box;
+        padding: 20px;
+      }
+
+      .confirm_prompt .actions {
+        position: absolute;
+        right: 20px;
+        bottom: 10px;
+      }
+
+      .confirm_prompt .actions a {
+        display: inline-block;
+        width: 60px;
+        height: 25px;
+        text-align: center;
+        padding-top: 8px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+      }
+
+      a.confirm_yes {
+        background: #9f1331;
+      }
+
+      a.confirm_no {
+        background: #289f37;
+      }
+
+      .overlay {
+        display: none;
+        position: absolute;
+        z-index: 5;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+        /*delete button styles*/
+      span.remove {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        display: inline-block;
+        overflow: hidden;
+        transform: rotate(45deg);
+        right: 20px;
+        cursor: pointer;
+      }
+
+      span.remove:hover {
+        width: 24px;
+        height: 24px;
+      }
+
+      span.remove:before, span.remove:after {
+        background: #ec5555;
+        content: "";
+        position: absolute;
+      }
+      span.remove:before {
+        height: 3px;
+        top: 50%;
+        right: 0;
+        left: 0;
+        margin-top: -1px;
+      }
+      span.remove:after {
+        width: 3px;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        margin-left: -1px;
+      }
+
+      .overlay {
+        display: none;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(100,100, 100);
+        opacity: 75%;
+        z-index: 10;
+      }
+      .confirm_prompt{
+        background-color: red;
+        z-index: 5;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script>
+      todo_items = [
+        { id: 1, title: 'Homework' },
+        { id: 2, title: 'Shopping' },
+        { id: 3, title: 'Calling Mom' },
+        { id: 4, title: 'Coffee with John '}
+      ];
+
+      document.addEventListener('DOMContentLoaded', e => {
+        let list = document.querySelector('#todo_list');
+        let overlay = document.querySelector('.overlay');
+        let prompt_box = document.querySelector('.confirm_prompt');
+
+        let todo_temp = Handlebars.compile(document.querySelector('#language_temp').innerHTML);
+        let prompt_temp = Handlebars.compile(document.querySelector('#confirm_box').innerHTML);
+        list.insertAdjacentHTML('beforeend', todo_temp({todo: todo_items}));
+        
+        document.querySelectorAll('button').forEach(button => {
+          button.addEventListener('click', e => {
+            let todo_id = e.target.parentElement.dataset.id;
+            let prompt = prompt_temp({id: todo_id});
+            prompt_box.insertAdjacentHTML('beforeend', prompt);
+            prompt_box.style.display = 'block';
+            // overlay.style.display = 'block';
+            document.querySelector(`#delete_${todo_id}`).addEventListener('click', e => {
+              prompt_box.innerHTML = '';
+              prompt_box.style.display = 'none';
+              document.querySelector(`#todo_${todo_id}`).remove();
+            });
+            document.querySelector(`#cancel`).addEventListener('click', e => {
+              prompt_box.innerHTML = '';
+              prompt_box.style.display = 'none';
+            })
+          })
+        })
+      });  
+    </script>
+  </head>
+  <body>
+    <script id="language_temp" type="text/x-handlebars">
+      {{#each todo}}
+      <li id="todo_{{id}}" data-id="{{id}}">
+        {{title}}
+        <button>Delete</button>
+      </li>
+      {{/each}}
+    </script>
+    <script id="confirm_box" type="text/x-handlebars">
+      <div class="prompt_window">
+        <p>Are you sure you want to delete this todo?</p>
+        <div class="actions">
+        <button id="delete_{{id}}">Yes</button><button id="cancel">No</button>
+        </div>
+      </div>
+    </script>
+    <main>
+      <h3>Todos</h3>
+      <ul id="todo_list"></ul>
+    </main>
+    <div class="overlay"></div>
+    <div class="confirm_prompt">
+      
+    </div>
+  </body>
+</html>
