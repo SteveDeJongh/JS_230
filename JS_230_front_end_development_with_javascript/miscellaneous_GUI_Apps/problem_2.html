@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Programming Languages</title>
+    <style>
+      body {
+        background: #999900;
+      }
+
+      h1 {
+        text-align: center;
+        color: #fff;
+      }
+
+      main {
+        box-sizing: border-box;
+        padding: 20px;
+        width: 600px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 4px;
+      }
+
+      button {
+        display: inline-block;
+        text-decoration: none;
+        background: #990;
+        color: #fff;
+        text-align: center;
+        width: 90px;
+        border-radius: 4px;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', e => {
+        const languages = [
+          {
+            name: 'Ruby',
+            description: 'Ruby is a dynamic, reflective, object-oriented, ' +
+            'general-purpose programming language. It was designed and developed in the mid-1990s ' +
+            'by Yukihiro Matsumoto in Japan. According to its creator, Ruby was influenced by Perl, ' +
+            'Smalltalk, Eiffel, Ada, and Lisp. It supports multiple programming paradigms, ' +
+            'including functional, object-oriented, and imperative. It also has a dynamic type ' +
+            'system and automatic memory management.'
+          },
+
+          {
+            name: 'JavaScript',
+            description: 'JavaScript is a high-level, dynamic, untyped, and interpreted ' +
+            'programming language. It has been standardized in the ECMAScript language ' +
+            'specification. Alongside HTML and CSS, JavaScript is one of the three core ' +
+            'technologies of World Wide Web content production; the majority of websites employ ' +
+            'it, and all modern Web browsers support it without the need for plug-ins. JavaScript ' +
+            'is prototype-based with first-class functions, making it a multi-paradigm language, ' +
+            'supporting object-oriented, imperative, and functional programming styles.'
+          },
+
+          {
+            name: 'Lisp',
+            description: 'Lisp (historically, LISP) is a family of computer programming languages ' +
+            'with a long history and a distinctive, fully parenthesized prefix notation. ' +
+            'Originally specified in 1958, Lisp is the second-oldest high-level programming ' +
+            'language in widespread use today. Only Fortran is older, by one year. Lisp has changed ' +
+            'since its early days, and many dialects have existed over its history. Today, the best '+
+            'known general-purpose Lisp dialects are Common Lisp and Scheme.'
+          }
+        ];
+
+        languages.forEach((lang, idx) => {
+          lang["id"] = idx;
+          lang["shortDesc"] = lang["description"].slice(0, 120) + '...';
+        })
+
+        let langTemp = Handlebars.compile(document.querySelector('#language_temp').innerHTML);
+        document.querySelector('main div').insertAdjacentHTML('beforeend', langTemp({lang: languages}));
+
+        document.querySelector('main div').addEventListener('click', e => {
+          let target = e.target;
+          if (target.tagName !== 'BUTTON') { return; }
+
+          let text = target.previousElementSibling;
+          let id = parseInt(target.id);
+          if (e.target.textContent === "Show More") {
+            text.textContent = languages[id].description;
+            e.target.textContent = "Show Less";
+          } else {
+            text.textContent = languages[id].shortDesc;
+            e.target.textContent = "Show More";
+          }
+        });
+      })
+    </script>
+    <script id="language_temp" type="text/x-handlebars">
+      {{#each lang}}
+      <article id="{{id}}">
+        <h3>{{name}}</h3>
+        <p>{{shortDesc}}</p>
+        <button id="{{id}}_button">Show More</button>
+      </article>
+      {{/each}}
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Programming Languages</h1>
+    </header>
+    <main>
+      <div>
+
+      </div>
+    </main>
+  </body>
+</html>
