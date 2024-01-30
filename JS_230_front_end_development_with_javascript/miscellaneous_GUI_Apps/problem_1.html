@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Exotic Animals</title>
+    <style>
+
+      body {
+        background: #335;
+      }
+
+      h1 {
+        margin-top: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+        color: #fff;
+        font-size: 28px;
+      }
+
+      figure {
+        width: 22%;
+        margin-left: 2%;
+        display: inline-block;
+        margin-bottom: 20px;
+        vertical-align: top;
+        padding: 10px;
+        box-sizing: border-box;
+        background: #fff;
+        border-radius: 3px;
+        position: relative;
+      }
+
+      figcaption {
+        opacity: 0;
+        width: 300px;
+        padding: 10px;
+        height: 150px;
+        border-radius: 4px;
+        background: rgba(0, 0, 20, 0.7);
+        color: #fff;
+        z-index: 5;
+      }
+
+      img {
+        width: 100%;
+      }
+
+      /* figcaption {
+        opacity: 0;
+      } */
+
+      figcaption .show {
+        /* position: abosolute; */
+        opacity: 100;
+        transition: opacity 500ms;
+      }
+
+      figcaption .hide {
+        opacity: 0;
+        transition: opacity 500ms;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', e => {
+        let app = {
+          startTimer: function(e) {
+            if (e.target.tagName !== 'IMG') { return; }
+            this.timer = setTimeout(function() {
+              this.showToolTip(e);
+            }.bind(this), 2000);
+          },
+
+          showToolTip: function(e) {
+            let figcap = e.target.nextElementSibling;
+            figcap.style.position = 'absolute';
+            figcap.classList.add('show');
+            figcap.classList.remove('hide');
+          },
+
+          handleMouseLeave: function(e) {
+            if (this.timer) {
+              clearTimeout(this.timer);
+            }
+            let figcap = e.target.nextElementSibling;
+            figcap.classList.add('hide');
+            figcap.classList.remove('show');
+          },
+
+          init() {
+            let exotic_animals = [...document.querySelectorAll('#exotic_animals > figure > img')];
+            exotic_animals.forEach (img => {
+              img.addEventListener('mouseenter', this.startTimer.bind(this));
+              img.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
+            });
+          },
+        }
+
+        app.init();
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Animals</h1>
+    <div id="exotic_animals">
+      <figure>
+        <img src="https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_3x2.jpg">
+        <figcaption>This is a dog.</figcaption>
+      </figure>
+      <figure>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Labrador_Retriever_portrait.jpg/1200px-Labrador_Retriever_portrait.jpg">
+        <figcaption>This is also a dog</figcaption>
+      </figure>
+    </div>
+  </body>
+</html>
