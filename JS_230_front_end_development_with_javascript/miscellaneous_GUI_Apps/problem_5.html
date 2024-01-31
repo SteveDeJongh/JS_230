@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Car Shop with Filtering</title>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <style>
+      @import 'whitespace-reset.css';
+      
+      #cars {
+        margin-top: 30px;
+      }
+
+      .car {
+        display: inline-block;
+        width: 200px;
+        margin: 0 0 20px 20px;
+        border-radius: 4px;
+      }
+
+      main h1 {
+        margin: 20px 0 0 20px;
+        font-size: 26px;
+      }
+
+      .car a {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #e29921;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+
+      .car h2, .car p, .car a {
+        margin-top: 5px;
+      }
+
+      .car img {
+        width: 100%;
+      }
+
+      header {
+        color: #fff;
+        height: 100px;
+        background: #e29921;
+        padding: 20px;
+        box-sizing: border-box;
+        outline: none;
+        border-radius: 4px;
+      }
+
+      header h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      select {
+        width: 80px;
+        height: 25px;
+        background: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        margin-left: 5px;
+        margin-right: 8px;
+        outline: none;
+        border-radius: 4px;
+      }
+
+      option {
+        background: #e29921;
+      }
+
+      .filter_btn {
+        margin-left: 20px;
+        background: transparent;
+        border: 1px solid #fff;
+        border-radius: 4px;
+        padding: 5px 10px;
+        color: #fff;
+        outline: none;
+      }
+    </style>
+    <script>
+      const cars = [
+        { make: 'Honda', image: 'images/honda-accord-2005.jpg', model: 'Accord', year: 2005, price: 7000 },
+        { make: 'Honda', image: 'images/honda-accord-2008.jpg', model: 'Accord', year: 2008, price: 11000 },
+        { make: 'Toyota', image: 'images/toyota-camry-2009.jpg', model: 'Camry', year: 2009, price: 12500 },
+        { make: 'Toyota', image: 'images/toyota-corrolla-2016.jpg', model: 'Corolla', year: 2016, price: 15000 },
+        { make: 'Suzuki', image: 'images/suzuki-swift-2014.jpg', model: 'Swift', year: 2014, price: 9000 },
+        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 25000 },
+        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
+      ];
+
+      const options = {make: [], model: [], price: [], year: [],};
+
+      cars.forEach(car => {
+        Object.keys(options).forEach(k => {
+          let val = car[k];
+          if (!options[k].includes(val)) {
+            options[k].push(val);
+          }
+        })
+      });
+
+      document.addEventListener('DOMContentLoaded', e => {
+        // let templates = {}; // to do later if template count > 4
+        Object.keys(options).forEach(option => {
+          let parentEl = document.querySelector(`#${option}Select`);
+          options[option].sort().forEach(val => {
+            let opt = document.createElement('option');
+            opt.setAttribute('value', val);
+            opt.textContent = val;
+            parentEl.appendChild(opt);
+          })
+        });
+
+        renderCars(cars);
+      });
+
+      function renderCars(cars) {
+        let carsTemplate = Handlebars.compile(document.querySelector('#cars_template').innerHTML);
+        let carTemplate = Handlebars.compile(document.querySelector('#car_template').innerHTML);
+        Handlebars.registerPartial('car_template', carTemplate);
+
+        let content = carsTemplate({cars: cars});
+        document.querySelector('#cars').insertAdjacentHTML('beforeend', content);
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Buy Used Cars</h1>
+      <div id="filters">
+        <label for="make">Make: </label>
+        <select id="makeSelect">
+          <option value="all">All</option>
+        </select>
+        <label for="model">Model:</label>
+        <select id="modelSelect">
+          <option value="all">All</option>
+        </select>
+        <label for="price">Price:</label>
+        <select id="priceSelect">
+          <option value="all">All</option>
+        </select>
+        <label for="year">Year:</label>
+        <select id="yearSelect">
+          <option value="all">All</option>
+        </select>
+        <button class="filter_btn">Filter</button>
+      </div>
+    </header>
+    <main>
+      <div id="cars">
+        <div class="car">
+          <figure></figure>
+          <h2></h2>
+          <p></p>
+          <p></p>
+          <a href="#">Buy</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- <script id="options_template" type="text/x-handlebars">
+      <option value="{{option}}">{{option}}</option>
+    </script>
+
+    <script id="filter_template" type="text/x-handlebars">
+      <label for="make">Make: </label>
+      <select id="makeSelect">
+        <option value="all">All</option>
+        {{#each make}}
+        {{>optionsPartial}}
+        {{/each}}
+      </select>
+      <label for="model">Model:</label>
+      <select id="modelSelect">
+        <option value="all">All</option>
+        {{#each model}}
+        {{>options_template}}
+        {{/each}}
+      </select>
+      <label for="price">Price:</label>
+      <select id="priceSelect">
+        <option value="all">All</option>
+        {{#each price}}
+        {{>options_template}}
+        {{/each}}
+      </select>
+      <label for="year">Year:</label>
+      <select id="yearSelect">
+        <option value="all">All</option>
+        {{#each year}}
+        {{>options_template}}
+        {{/each}}
+      </select>
+      <button class="filter_btn">Filter</button>
+    </script> -->
+
+    <script id="cars_template" type="text/x-handlebars">
+      {{#each cars}}
+      {{>car_template}}
+      {{/each}}
+    </script>
+
+    <script id="car_template" type="text/x-handlebars" data-type="partial">
+      <div class="car">
+        <figure>
+          <img src="https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg">
+        </figure>
+        <h2>{{make}} {{model}}</h2>
+        <p>Year: {{year}}</p>
+        <p>Price: {{price}}</p>
+        <a href="#">Buy</a>
+      </div>
+    </script>
+  </body>
+</html>
