@@ -103,7 +103,34 @@
       });
 
       document.addEventListener('DOMContentLoaded', e => {
-        // let templates = {}; // to do later if template count > 4
+        renderOptions();
+        renderCars(cars);
+
+        document.querySelector('.filter_btn').addEventListener('click', e => {
+          let filteredCars = filterCars(cars);
+          renderCars(filteredCars);
+        })
+      });
+
+      function filterCars(cars) {
+        let filterDiv = document.querySelector('#filters');
+        let makeSel = filterDiv.querySelector('#makeSelect').value;
+        let modelSel = filterDiv.querySelector('#modelSelect').value;
+        let priceSel = filterDiv.querySelector('#priceSelect').value;
+        let yearSel = filterDiv.querySelector('#yearSelect').value;
+        priceSel = priceSel === 'all' ? 'all' : Number(priceSel);
+        yearSel = yearSel === 'all' ? 'all' : Number(yearSel);
+
+        let keys = Object.keys(cars[0]);
+        return cars.filter(car => {
+          return (makeSel === 'all' || car['make'] === makeSel) &&
+                 (modelSel === 'all' || car['model'] === modelSel) &&
+                 (priceSel === 'all' || car['price'] === priceSel) &&
+                 (yearSel === 'all' || car['year'] === yearSel);
+        })
+      }
+
+      function renderOptions(){
         Object.keys(options).forEach(option => {
           let parentEl = document.querySelector(`#${option}Select`);
           options[option].sort().forEach(val => {
@@ -113,17 +140,15 @@
             parentEl.appendChild(opt);
           })
         });
-
-        renderCars(cars);
-      });
-
+      }
+      
       function renderCars(cars) {
         let carsTemplate = Handlebars.compile(document.querySelector('#cars_template').innerHTML);
         let carTemplate = Handlebars.compile(document.querySelector('#car_template').innerHTML);
         Handlebars.registerPartial('car_template', carTemplate);
 
         let content = carsTemplate({cars: cars});
-        document.querySelector('#cars').insertAdjacentHTML('beforeend', content);
+        document.querySelector('#cars').innerHTML = content;
       }
     </script>
   </head>
