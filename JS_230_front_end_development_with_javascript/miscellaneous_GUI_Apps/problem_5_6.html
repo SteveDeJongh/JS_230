@@ -91,28 +91,7 @@
         { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
       ];
 
-      const options = {make: [], model: [], price: [], year: [],};
-
-      cars.forEach(car => {
-        Object.keys(options).forEach(k => {
-          let val = car[k];
-          if (!options[k].includes(val)) {
-            options[k].push(val);
-          }
-        })
-      });
-
-      document.addEventListener('DOMContentLoaded', e => {
-        renderOptions();
-        renderCars(cars);
-
-        document.querySelector('.filter_btn').addEventListener('click', e => {
-          let filteredCars = filterCars(cars);
-          renderCars(filteredCars);
-        })
-      });
-
-      function filterCars(cars) {
+      function filterSelections() {
         let filterDiv = document.querySelector('#filters');
         let makeSel = filterDiv.querySelector('#makeSelect').value;
         let modelSel = filterDiv.querySelector('#modelSelect').value;
@@ -120,27 +99,48 @@
         let yearSel = filterDiv.querySelector('#yearSelect').value;
         priceSel = priceSel === 'all' ? 'all' : Number(priceSel);
         yearSel = yearSel === 'all' ? 'all' : Number(yearSel);
+        
+        return [makeSel, modelSel, priceSel, yearSel].filter(val => val !== 'all');
+      };
 
-        let keys = Object.keys(cars[0]);
+      function filterCars(cars, selections) {
         return cars.filter(car => {
-          return (makeSel === 'all' || car['make'] === makeSel) &&
-                 (modelSel === 'all' || car['model'] === modelSel) &&
-                 (priceSel === 'all' || car['price'] === priceSel) &&
-                 (yearSel === 'all' || car['year'] === yearSel);
+          let carValues = Object.values(car);
+          return selections.every(sel => carValues.includes(sel));
         })
-      }
+      };
 
-      function renderOptions(){
-        Object.keys(options).forEach(option => {
+      function createSelections(availCars) {
+        const filters = {make: [], model: [], price: [], year: [],};
+        availCars.forEach(car => {
+          Object.keys(filters).forEach(selection => {
+            let option = car[selection];
+            if (!filters[selection].includes(option)) {
+              filters[selection].push(option);
+            }
+          })
+        });
+        return filters;
+      };
+
+      // function filterOptions(options, model) {
+      //   let filteredCars = cars.filter(car => car['model'] === model);
+      //   console.log(filteredCars);
+      //   return createOptions(options, filteredCars);
+      // };
+
+      function renderFilters(filters){
+        Object.keys(filters).forEach(option => {
           let parentEl = document.querySelector(`#${option}Select`);
-          options[option].sort().forEach(val => {
+          parentEl.innerHTML = '<option value="all">All</option>';
+          filters[option].sort().forEach(val => {
             let opt = document.createElement('option');
             opt.setAttribute('value', val);
             opt.textContent = val;
             parentEl.appendChild(opt);
           })
         });
-      }
+      };
       
       function renderCars(cars) {
         let carsTemplate = Handlebars.compile(document.querySelector('#cars_template').innerHTML);
@@ -149,7 +149,27 @@
 
         let content = carsTemplate({cars: cars});
         document.querySelector('#cars').innerHTML = content;
-      }
+      };
+
+      document.addEventListener('DOMContentLoaded', e => {
+        let currFilters = createSelections(cars);
+        renderFilters(currFilters);
+        renderCars(cars);
+
+        document.querySelector('#makeSelect').addEventListener('change', e => {
+          let make = e.target.value;
+          let currCars = filterCars(cars, [make]);
+          let fOpt = createSelections(currCars);
+          renderFilters(fOpt);
+          document.querySelectorAll(`#makeSelect > option`)[1].setAttribute('selected', 'selected');
+        })
+
+        document.querySelector('.filter_btn').addEventListener('click', e => {
+          let selections = filterSelections();
+          let filteredCars = filterCars(cars, selections);
+          renderCars(filteredCars);
+        })
+      });
     </script>
   </head>
   <body>
