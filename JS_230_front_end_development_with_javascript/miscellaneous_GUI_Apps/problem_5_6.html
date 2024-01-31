@@ -3,6 +3,8 @@
   <head>
     <title>Car Shop with Filtering</title>
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+    <script src="underscore.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <style>
       @import 'whitespace-reset.css';
       
@@ -81,98 +83,248 @@
       }
     </style>
     <script>
-      const cars = [
-        { make: 'Honda', image: 'images/honda-accord-2005.jpg', model: 'Accord', year: 2005, price: 7000 },
-        { make: 'Honda', image: 'images/honda-accord-2008.jpg', model: 'Accord', year: 2008, price: 11000 },
-        { make: 'Toyota', image: 'images/toyota-camry-2009.jpg', model: 'Camry', year: 2009, price: 12500 },
-        { make: 'Toyota', image: 'images/toyota-corrolla-2016.jpg', model: 'Corolla', year: 2016, price: 15000 },
-        { make: 'Suzuki', image: 'images/suzuki-swift-2014.jpg', model: 'Swift', year: 2014, price: 9000 },
-        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 25000 },
-        { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
-      ];
+      // const cars = [
+      //   { make: 'Honda', image: 'images/honda-accord-2005.jpg', model: 'Accord', year: 2005, price: 7000 },
+      //   { make: 'Honda', image: 'images/honda-accord-2008.jpg', model: 'Accord', year: 2008, price: 11000 },
+      //   { make: 'Toyota', image: 'images/toyota-camry-2009.jpg', model: 'Camry', year: 2009, price: 12500 },
+      //   { make: 'Toyota', image: 'images/toyota-corrolla-2016.jpg', model: 'Corolla', year: 2016, price: 15000 },
+      //   { make: 'Suzuki', image: 'images/suzuki-swift-2014.jpg', model: 'Swift', year: 2014, price: 9000 },
+      //   { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 25000 },
+      //   { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
+      // ];
 
-      function filterSelections() {
-        let filterDiv = document.querySelector('#filters');
-        let makeSel = filterDiv.querySelector('#makeSelect').value;
-        let modelSel = filterDiv.querySelector('#modelSelect').value;
-        let priceSel = filterDiv.querySelector('#priceSelect').value;
-        let yearSel = filterDiv.querySelector('#yearSelect').value;
-        priceSel = priceSel === 'all' ? 'all' : Number(priceSel);
-        yearSel = yearSel === 'all' ? 'all' : Number(yearSel);
+      // function filterSelections() {
+      //   let filterDiv = document.querySelector('#filters');
+      //   let makeSel = filterDiv.querySelector('#makeSelect').value;
+      //   let modelSel = filterDiv.querySelector('#modelSelect').value;
+      //   let priceSel = filterDiv.querySelector('#priceSelect').value;
+      //   let yearSel = filterDiv.querySelector('#yearSelect').value;
+      //   priceSel = priceSel === 'all' ? 'all' : Number(priceSel);
+      //   yearSel = yearSel === 'all' ? 'all' : Number(yearSel);
         
-        return [makeSel, modelSel, priceSel, yearSel].filter(val => val !== 'all');
-      };
-
-      function filterCars(cars, selections) {
-        return cars.filter(car => {
-          let carValues = Object.values(car);
-          return selections.every(sel => carValues.includes(sel));
-        })
-      };
-
-      function createSelections(availCars) {
-        const filters = {make: [], model: [], price: [], year: [],};
-        availCars.forEach(car => {
-          Object.keys(filters).forEach(selection => {
-            let option = car[selection];
-            if (!filters[selection].includes(option)) {
-              filters[selection].push(option);
-            }
-          })
-        });
-        return filters;
-      };
-
-      // function filterOptions(options, model) {
-      //   let filteredCars = cars.filter(car => car['model'] === model);
-      //   console.log(filteredCars);
-      //   return createOptions(options, filteredCars);
+      //   return [makeSel, modelSel, priceSel, yearSel].filter(val => val !== 'all');
       // };
 
-      function renderFilters(filters){
-        Object.keys(filters).forEach(option => {
-          let parentEl = document.querySelector(`#${option}Select`);
-          parentEl.innerHTML = '<option value="all">All</option>';
-          filters[option].sort().forEach(val => {
-            let opt = document.createElement('option');
-            opt.setAttribute('value', val);
-            opt.textContent = val;
-            parentEl.appendChild(opt);
-          })
-        });
-      };
-      
-      function renderCars(cars) {
-        let carsTemplate = Handlebars.compile(document.querySelector('#cars_template').innerHTML);
-        let carTemplate = Handlebars.compile(document.querySelector('#car_template').innerHTML);
-        Handlebars.registerPartial('car_template', carTemplate);
+      // function filterCars(cars, selections) {
+      //   return cars.filter(car => {
+      //     let carValues = Object.values(car);
+      //     return selections.every(sel => carValues.includes(sel));
+      //   })
+      // };
 
-        let content = carsTemplate({cars: cars});
-        document.querySelector('#cars').innerHTML = content;
-      };
+      // function createSelections(availCars) {
+      //   const filters = {make: [], model: [], price: [], year: [],};
+      //   availCars.forEach(car => {
+      //     Object.keys(filters).forEach(selection => {
+      //       let option = car[selection];
+      //       if (!filters[selection].includes(option)) {
+      //         filters[selection].push(option);
+      //       }
+      //     })
+      //   });
+      //   return filters;
+      // };
+
+      // function renderFilters(filters){
+      //   Object.keys(filters).forEach(option => {
+      //     let parentEl = document.querySelector(`#${option}Select`);
+      //     parentEl.innerHTML = '<option value="all">All</option>';
+      //     filters[option].sort().forEach(val => {
+      //       let opt = document.createElement('option');
+      //       opt.setAttribute('value', val);
+      //       opt.textContent = val;
+      //       parentEl.appendChild(opt);
+      //     })
+      //   });
+      // };
+      
+      // function renderCars(cars) {
+      //   let carsTemplate = Handlebars.compile(document.querySelector('#cars_template').innerHTML);
+      //   let carTemplate = Handlebars.compile(document.querySelector('#car_template').innerHTML);
+      //   Handlebars.registerPartial('car_template', carTemplate);
+
+      //   let content = carsTemplate({cars: cars});
+      //   document.querySelector('#cars').innerHTML = content;
+      // };
 
       document.addEventListener('DOMContentLoaded', e => {
-        let currFilters = createSelections(cars);
-        renderFilters(currFilters);
-        renderCars(cars);
+        // let currFilters = createSelections(cars);
+        // renderFilters(currFilters);
+        // renderCars(cars);
 
-        document.querySelector('#makeSelect').addEventListener('change', e => {
-          let make = e.target.value;
-          let currCars = filterCars(cars, [make]);
-          let fOpt = createSelections(currCars);
-          renderFilters(fOpt);
-          document.querySelectorAll(`#makeSelect > option`)[1].setAttribute('selected', 'selected');
-        })
+        // document.querySelector('#makeSelect').addEventListener('change', e => {
+        //   let make = e.target.value;
+        //   let currCars = filterCars(cars, [make]);
+        //   let fOpt = createSelections(currCars);
+        //   renderFilters(fOpt);
+        //   document.querySelectorAll(`#makeSelect > option`)[1].setAttribute('selected', 'selected');
+        // })
 
-        document.querySelector('.filter_btn').addEventListener('click', e => {
-          let selections = filterSelections();
-          let filteredCars = filterCars(cars, selections);
-          renderCars(filteredCars);
-        })
+        // document.querySelector('.filter_btn').addEventListener('click', e => {
+        //   let selections = filterSelections();
+        //   let filteredCars = filterCars(cars, selections);
+        //   renderCars(filteredCars);
+        // })
+          Handlebars.registerPartial('car_template', $('#car_template').html());
+          Handlebars.registerPartial('model_options_template', $('#model_options_template').html());
+
+          var cars = [
+            { make: 'Honda', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'Accord', year: 2005, price: 7000},
+            { make: 'Honda', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'Accord', year: 2008, price: 11000 },
+            { make: 'Toyota', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'Camry', year: 2009, price: 12500 },
+            { make: 'Toyota', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'Corrolla', year: 2016, price: 15000 },
+            { make: 'Suzuki', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'Swift', year: 2014, price: 9000 },
+            { make: 'Audi', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'A4', year: 2013, price: 25000 },
+            { make: 'Audi', image: 'https://t4.ftcdn.net/jpg/05/13/30/67/360_F_513306787_RuVFkf6LYLo5Y5nGndaz9VkHSMKjCQkq.jpg', model: 'A4', year: 2013, price: 26000 },
+          ];
+
+
+          var App = {
+            carsTemplate: Handlebars.compile($('#cars_template').html()),
+            filtersTemplate: Handlebars.compile($('#filters_template').html()),
+            allCars: cars,
+            $cars: $('#cars'),
+            $filters: $('#filters'),
+            filteredCars: cars,
+            modelOptionsTemplate: Handlebars.compile($('#model_options_template').html()),
+
+            renderCars: function() {
+              this.$cars.html(this.carsTemplate({cars: this.filteredCars}));
+            },
+
+            renderFilterMenu: function() {
+              this.$filters.html(this.filtersTemplate(this.generateFilters()));
+            },
+
+            handleFilterClick: function() {
+              var make  = $('#make_select').val();
+              var model = $('#model_select').val();
+              var price = Number($('#price_select').val());
+              var year  = Number($('#year_select').val());
+
+              var filters = {};
+
+              if (make) filters.make = make;
+              if (model) filters.model = model;
+              if (price) filters.price = price;
+              if (year) filters.year = year;
+
+              this.filterCars(filters);
+            },
+
+            filterCars: function(filters) {
+              this.filteredCars = _(this.allCars).where(filters);
+              this.renderCars();
+            },
+
+            generateFilters: function() {
+              var makes  = _.uniq(_(this.allCars).pluck('make'));
+              var models = _.uniq(_(this.allCars).pluck('model'));
+              var prices = _.uniq(_(this.allCars).pluck('price'));
+              var years  = _.uniq(_(this.allCars).pluck('year'));
+
+              return { makes: makes, models: models, prices: prices, years: years };
+            },
+
+            renderModelsForMake: function(models) {
+              $('#model_select').html(this.modelOptionsTemplate({models: models}));
+            },
+
+            handleMakeSelect: function(e) {
+              var make = $(e.target).val();
+              var modelsForMake;
+
+              if (make) {
+                modelsForMake = _.uniq(_(_.where(this.allCars, {make: make})).pluck('model'));
+              } else {
+                modelsForMake = _.uniq(_(this.allCars).pluck('model'));
+              }
+
+              this.renderModelsForMake(modelsForMake);
+            },
+
+            init: function() {
+              this.renderCars();
+              this.renderFilterMenu();
+              $('#filters').on('click', '.filter_btn', this.handleFilterClick.bind(this));
+              $('#make_select').on('change', this.handleMakeSelect.bind(this));
+            }
+          };
+
+          App.init();
       });
     </script>
   </head>
   <body>
+    <header>
+      <h1>Buy Used Cars</h1>
+      <div id="filters"></div>
+    </header>
+    <main>
+      <div id="cars"></div>
+    </main>
+  
+    <script id="filters_template" type="text/x-handlebars-template">
+        <label for="make_select">Make</label>
+        <select name="make" id="make_select">
+          <option value="">All</option>
+          {{#each makes}}
+            <option value="{{.}}">{{.}}</option>
+          {{/each}}
+        </select>
+  
+        <label for="model_select">Model</label>
+        <select name="model" id="model_select">
+          {{> model_options_template }}
+        </select>
+  
+        <label for="price_select">Price</label>
+        <select name="price" id="price_select">
+          <option value="">Any</option>
+          {{#each prices}}
+            <option value="{{.}}">{{.}}</option>
+          {{/each}}
+        </select>
+  
+        <label for="year_select">Year</label>
+        <select name="year" id="year_select">
+          <option value="">Any</option>
+          {{#each years}}
+            <option value="{{.}}">{{.}}</option>
+          {{/each}}
+        </select>
+  
+        <button class="filter_btn">Filter</button>
+    </script>
+  
+    <script id="cars_template" type="text/x-handlebars-templates">
+      {{#each cars}}
+        {{> car_template}}
+      {{/each}}
+    </script>
+  
+    <script id="car_template" type="text/x-handlebars-templates">
+      <div class="car">
+        <figure>
+          <img src="{{image}}">
+        </figure>
+        <h2>{{make}} {{model}}</h2>
+        <p class="year">Year: {{year}}</p>
+        <p class="price">Price: ${{price}}</p>
+        <a href="#">Buy</a>
+      </div>
+    </script>
+  
+    <script id="model_options_template" type="text/x-handlebars-template">
+        <option value="">All</option>
+      {{#each models}}
+        <option value="{{.}}">{{.}}</option>
+      {{/each}}
+    </script>
+  
+    <!-- <script src="app.js"></script> -->
+  </body>
+  <!-- <body>
     <header>
       <h1>Buy Used Cars</h1>
       <div id="filters">
@@ -207,42 +359,6 @@
       </div>
     </main>
 
-    <!-- <script id="options_template" type="text/x-handlebars">
-      <option value="{{option}}">{{option}}</option>
-    </script>
-
-    <script id="filter_template" type="text/x-handlebars">
-      <label for="make">Make: </label>
-      <select id="makeSelect">
-        <option value="all">All</option>
-        {{#each make}}
-        {{>optionsPartial}}
-        {{/each}}
-      </select>
-      <label for="model">Model:</label>
-      <select id="modelSelect">
-        <option value="all">All</option>
-        {{#each model}}
-        {{>options_template}}
-        {{/each}}
-      </select>
-      <label for="price">Price:</label>
-      <select id="priceSelect">
-        <option value="all">All</option>
-        {{#each price}}
-        {{>options_template}}
-        {{/each}}
-      </select>
-      <label for="year">Year:</label>
-      <select id="yearSelect">
-        <option value="all">All</option>
-        {{#each year}}
-        {{>options_template}}
-        {{/each}}
-      </select>
-      <button class="filter_btn">Filter</button>
-    </script> -->
-
     <script id="cars_template" type="text/x-handlebars">
       {{#each cars}}
       {{>car_template}}
@@ -260,5 +376,5 @@
         <a href="#">Buy</a>
       </div>
     </script>
-  </body>
+  </body> -->
 </html>

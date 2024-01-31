@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>A Javascript Stopwatch</title>
+  </head>
+  <style>
+    body {
+      background: #a19123;
+      font-family: Helvetica, Arial, sans-serif;
+      color: #fff;
+    }
+
+    #app {
+      width: 540px;
+      margin: 200px auto;
+    }
+
+    .timer {
+      font-size: 78px;
+      font-weight: bold;
+    }
+
+    .timer p {
+      margin: 0 0 20px 0;
+    }
+
+    .timer span {
+      display: inline-block;
+      margin: 0 10px 0 10px;
+    }
+
+    .controls {
+      width: 220px;
+      margin: 0 auto;
+    }
+
+    .controls button {
+      background: transparent;
+      border: 1px solid #fff;
+      border-radius: 4px;
+      padding: 10px 30px;
+      text-align: center;
+      color: #fff;
+      cursor: pointer;
+      outline: 0px;
+    }
+
+    .controls button:hover {
+      background: rgba(100, 100, 100, 0.2);
+    }
+
+    .toggle {
+      margin-right: 20px;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', e => {
+      let app = {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        centisecs: 0,
+        running: false,
+        toggle: document.querySelector('.toggle'),
+        reset: document.querySelector('.reset'),
+        timer: null,
+
+        handleToggle(e) {
+          let text = this.toggle.textContent;
+          if (text === 'Start') {
+            this.toggle.textContent = 'Stop';
+            this.timer = setInterval(this.increaseTime.bind(this), 1);
+
+          } else {
+            this.toggle.textContent = 'Start';
+            clearInterval(this.timer);
+          }
+        },
+
+        increaseTime() {
+          let centisecs = document.querySelector('.centisecs');
+          let seconds = document.querySelector('.secs');
+          let minutes = document.querySelector('.mins');
+          let hours = document.querySelector('.hours');
+
+          this.centisecs += 1;
+          centisecs.textContent = this.formatDigits(this.centisecs);
+          if (this.centisecs === 99) {
+            this.centisecs = 0;
+            this.seconds += 1;
+            seconds.textContent = this.formatDigits(this.seconds)
+          }
+
+          if (this.seconds === 59) {
+            this.seconds = 0;
+            this.minutes += 1;
+            minutes.textContent = this.formatDigits(this.minutes)
+          }
+
+          if (this.minutes === 59) {
+            this.minutes = 0;
+            this.hours += 1;
+            hours.textContent = this.formatDigits(this.hours)
+          }
+        },
+
+        formatDigits(val) {
+          let sNum = String(val);
+          if (sNum.length < 2) { sNum = "0" + sNum };
+          return sNum;
+        },
+
+        handleReset(e) {
+          this.centisecs = 0;
+          this.seconds = 0;
+          this.minutes = 0;
+          this.hours = 0;
+          this.resetTime();
+        },
+
+        resetTime() {
+          document.querySelector('.centisecs').textContent = this.formatDigits(this.centisecs);
+          document.querySelector('.secs').textContent = this.formatDigits(this.seconds);
+          document.querySelector('.mins').textContent = this.formatDigits(this.minutes);
+          document.querySelector('.hours').text = this.formatDigits(this.hours);
+        },
+
+        bindTargets() {
+          this.toggle.addEventListener('click', this.handleToggle.bind(this));
+          this.reset.addEventListener('click', this.handleReset.bind(this));
+        },
+
+        init() {
+          this.bindTargets();
+        },
+      }
+
+      app.init();
+    });
+  </script>
+  <body>
+    <div id="app">
+      <div class="timer">
+        <span class="hours">00</span>:<span class="mins">00</span>:<span class="secs">00</span>:<span class="centisecs">00</span>
+      </div>
+      <div class="controls">
+        <button class="toggle">Start</button>
+        <button class="reset">Reset</button>
+      </div>
+    </div>
+  </body>
+</html>
