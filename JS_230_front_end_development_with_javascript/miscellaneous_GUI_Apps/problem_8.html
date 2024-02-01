@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>A JavaScript Calculator</title>
+    <style>
+      body {
+        background: #22596e;
+      }
+      #calculator {
+        width: 350px;
+        height: 430px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 4px;
+        padding: 5px;
+        box-sizing: border-box;
+      }
+
+      #screen {
+        height: 120px;
+        border-bottom: 1px solid #ccc;
+        box-sizing: border-box;
+        padding: 10px;
+        margin: 0 0 10px 0;
+        text-align: right;
+        position: relative;
+      }
+
+      #screen .current_num {
+        font-size: 36px;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        margin: 0px;
+      }
+
+      #buttons a {
+        width: 82px;
+        height: 53px;
+        background: #ccc;
+        box-sizing: border-box;
+        padding: 15px 0 0 0;
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        color: #000;
+        margin-top: 5px;
+        font-size: 18px;
+        border-radius: 4px;
+      }
+
+      #bottons a:hover {
+        background: #bbb;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', e => {
+        let app = {
+          entry: document.querySelector('.current_num'),
+          calculation: document.querySelector('.calculation'),
+          total: 0,
+          val1: 0,
+
+          bindListener() {
+            document.querySelector('#buttons').addEventListener('click', e => {
+              let buttonPress = e.target.textContent;
+
+              if (e.target.classList.contains('control')) {
+                this.handleControlPress(buttonPress);
+              }
+
+              if (e.target.classList.contains('digit')) {
+                this.handleDigitPress(buttonPress);
+              }
+
+              if (e.target.classList.contains('op')) {
+                this.handleOpPress(buttonPress);
+              }
+
+              if (e.target.classList.contains('result_button')) {
+                this.calculateTotal();
+              }
+            })
+          },
+
+          handleOpPress(op) {
+            this.calculation.textContent += this.entry.textContent + ' ' + op + ' ';
+            this.entry.textContent = '0';
+          },
+
+          calculateTotal() {
+            let operation = this.calculation.textContent.split(' ').filter(x => x);
+            operation.push(this.entry.textContent);
+            let val = Number(operation[0]);
+            for (let i = 2; i < operation.length; i += 2) {
+              val = this.singleCalc(operation[i-1], val, Number(operation[i]));
+            }
+            this.calculation.textContent = '';
+            this.entry.textContent = val;
+          },
+
+          singleCalc(op, n1, n2) {
+            let val;
+            switch (op) {
+              case "+":
+                val = n1 + n2;
+                break;
+              case "-":
+                val = n1 - n2;
+                break;
+              case "/":
+                val = n1 / n2;
+                break;
+              case "x":
+                val = n1 * n2;
+                break;
+              case "%":
+                val = n1 % n2;
+                break;
+            }
+            return val
+          },
+
+          handleControlPress(control) {
+            if (control === 'NEG') {
+              this.entry.textContent = "-" + this.entry.textContent;
+            } else if (control === 'CE') {
+              this.entry.textContent = '0';
+            } else if (control === 'C') {
+              this.entry.textContent = '0';
+              this.calculation.textContent = '';
+            }
+          },
+
+          handleDigitPress(digit) {
+            if (this.entry.textContent === '0') {
+              this.entry.textContent = digit;
+            } else {
+              this.entry.textContent += digit;
+            }
+          },
+
+          init() {
+            this.bindListener();
+          },
+        }
+
+        app.init();
+      })
+    </script>
+  </head>
+  <body>
+    <div id="calculator">
+      <div id="screen">
+        <p class="calculation"></p>
+        <p class="current_num">0</p>
+      </div>
+      <div id="buttons">
+        <a href="#" id="ce" class="control">CE</a>
+        <a href="#" id="c" class="control">C</a>
+        <a href="#" id="neg" class="control">NEG</a>
+        <a href="#" class="op">/</a>
+        <a href="#" class="digit">7</a>
+        <a href="#" class="digit">8</a>
+        <a href="#" class="digit">9</a>
+        <a href="#" class="op">x</a>
+        <a href="#" class="digit">4</a>
+        <a href="#" class="digit">5</a>
+        <a href="#" class="digit">6</a>
+        <a href="#" class="op">-</a>
+        <a href="#" class="digit">1</a>
+        <a href="#" class="digit">2</a>
+        <a href="#" class="digit">3</a>
+        <a href="#" class="op">+</a>
+        <a href="#" class="digit">0</a>
+        <a href="#" class="dot">.</a>
+        <a href="#" class="op">%</a>
+        <a href="#" class="result_button">=</a>
+      </div>
+    </div>
+  </body>
+</html>
