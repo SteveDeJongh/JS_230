@@ -58,18 +58,18 @@
         let app = {
           entry: document.querySelector('.current_num'),
           calculation: document.querySelector('.calculation'),
-          total: 0,
-          val1: 0,
 
           bindListener() {
             document.querySelector('#buttons').addEventListener('click', e => {
+              e.preventDefault();
+              
               let buttonPress = e.target.textContent;
 
               if (e.target.classList.contains('control')) {
                 this.handleControlPress(buttonPress);
               }
 
-              if (e.target.classList.contains('digit')) {
+              if (e.target.classList.contains('digit') || e.target.classList.contains('dot')) {
                 this.handleDigitPress(buttonPress);
               }
 
