@@ -68,78 +68,231 @@
       .form_errors, .error_message {
         color: #a93333;
       }
+
+      .success {
+        color: green;
+        border: 1px solid #52be43;
+      }
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', e => {
+        // let formValidation = {
+        //   firstName: document.querySelector('#firstname'),
+        //   lastName: document.querySelector('#lastname'),
+        //   email: document.querySelector('#email'),
+        //   password: document.querySelector('#password'),
+        //   phone: document.querySelector('#phone'),
+        //   inputs: document.querySelectorAll('input'),
+        //   form: document.querySelector('form'),
+        //   formStatus: document.querySelector('.form_errors'),
+        //   button: document.querySelector('button'),
+
+        //   bindEvents() {
+        //     this.firstName.addEventListener('focusout', this.checkName.bind(this, this.firstName));
+        //     this.lastName.addEventListener('focusout', this.checkName.bind(this, this.lastName));
+        //     this.password.addEventListener('focusout', this.checkPass.bind(this));
+        //     this.email.addEventListener('focusout', this.checkEmail.bind(this));
+        //     this.phone.addEventListener('focusout', this.checkPhone.bind(this));
+        //     this.button.addEventListener('click', this.submitForm.bind(this));
+
+        //     this.inputs.forEach(input => {
+        //        input.addEventListener('focus', this.removeError.bind(this, input));
+        //     });
+        //   },
+
+        //   submitForm(e) {
+        //     e.preventDefault();
+        //     if (this.allEntriesValid()) {
+        //       this.formStatus.textContent = 'Success, form submitted.';
+        //       this.formStatus.classList.remove('invalid_field');
+        //       this.formStatus.classList.add('success');
+        //     } else {
+        //       this.formStatus.classList.add('invalid_field');
+        //       this.formStatus.textContent = 'Error, please correct form information.';
+        //     }
+        //   },
+
+        //   allEntriesValid() {
+        //     return Array.from(this.inputs).every(ipt => {
+        //       return (ipt.classList.contains('optional') && !ipt.classList.contains('invalid_field')) ||
+        //       (!ipt.classList.contains('invalid_field') && ipt.value.length > 0)
+        //     });
+        //   },
+
+        //   checkName(n) {
+        //     if (!n.checkValidity()) {
+        //       let val = n.id.split('name')[0];
+        //       val = val[0].toUpperCase() + val.slice(1);
+        //       let msg = `${val} name is a required field.`;
+        //       this.addError(n, msg);
+        //     } else {
+        //       this.removeError(n);
+        //     }
+        //   },
+
+        //   checkPass() {
+        //     if (!this.password.checkValidity()) {
+        //       let msg = 'Password must be 10 characters or longer.';
+        //       this.addError(this.password, msg);
+        //     } else {
+        //       this.removeError(this.password);
+        //     }
+        //   },
+
+        //   checkEmail() {
+        //     if (this.email.validity.typeMismatch || this.email.value.length <= 0) {
+        //       this.addError(this.email, 'Email must be in the correct format. "aaa@address"');
+        //     } else {
+        //       this.removeError(this.email);
+        //     }
+        //   },
+
+        //   checkPhone() {
+        //     let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+        //     if (!this.phone.value.match(pattern)) {
+        //       this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
+        //     } else {
+        //       this.removeError(this.phone);
+        //     }
+        //   },
+
+        //   addError(el, msg) {
+        //     el.classList.add('invalid_field');
+        //     el.nextElementSibling.textContent = msg;
+        //   },
+
+        //   removeError(el) {
+        //     el.classList.remove('invalid_field');
+        //     el.nextElementSibling.textContent = '';
+        //   },
+
+        //   init() {
+        //     this.bindEvents();
+        //   }
+        // }
+
+        // formValidation.init();
+
+
         let formValidation = {
-          firstName: document.querySelector('#firstname'),
-          lastName: document.querySelector('#lastname'),
-          email: document.querySelector('#email'),
-          password: document.querySelector('#password'),
-          phone: document.querySelector('#phone'),
-          inputs: document.querySelectorAll('input'),
+          form: document.querySelector('form'),
+          input: document.querySelectorAll('input'),
 
-          bindEvents() {
-            this.firstName.addEventListener('focusout', this.checkName.bind(this, this.firstName));
-            this.lastName.addEventListener('focusout', this.checkName.bind(this, this.lastName));
-            this.password.addEventListener('focusout', this.checkPass.bind(this));
-            this.email.addEventListener('focusout', this.checkEmail.bind(this));
-            this.phone.addEventListener('focusout', this.checkPhone.bind(this));
+          // submitForm(e) {
+          //   e.preventDefault();
+          //   if (this.allEntriesValid()) {
+          //     this.formStatus.textContent = 'Success, form submitted.';
+          //     this.formStatus.classList.remove('invalid_field');
+          //     this.formStatus.classList.add('success');
+          //   } else {
+          //     this.formStatus.classList.add('invalid_field');
+          //     this.formStatus.textContent = 'Error, please correct form information.';
+          //   }
+          // },
 
-            this.inputs.forEach(input => {
-              input.addEventListener('focus', this.removeError.bind(this, input));
-            })
+          // allEntriesValid() {
+          //   return Array.from(this.inputs).every(ipt => {
+          //     return (ipt.classList.contains('optional') && !ipt.classList.contains('invalid_field')) ||
+          //     (!ipt.classList.contains('invalid_field') && ipt.value.length > 0)
+          //   });
+          // },
+
+          // checkName(n) {
+          //   if (!n.checkValidity()) {
+          //     let val = n.id.split('name')[0];
+          //     val = val[0].toUpperCase() + val.slice(1);
+          //     let msg = `${val} name is a required field.`;
+          //     this.addError(n, msg);
+          //   } else {
+          //     this.removeError(n);
+          //   }
+          // },
+
+          // checkPass() {
+          //   if (!this.password.checkValidity()) {
+          //     let msg = 'Password must be 10 characters or longer.';
+          //     this.addError(this.password, msg);
+          //   } else {
+          //     this.removeError(this.password);
+          //   }
+          // },
+
+          // checkEmail() {
+          //   if (this.email.validity.typeMismatch || this.email.value.length <= 0) {
+          //     this.addError(this.email, 'Email must be in the correct format. "aaa@address"');
+          //   } else {
+          //     this.removeError(this.email);
+          //   }
+          // },
+
+          // checkPhone() {
+          //   let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+          //   if (!this.phone.value.match(pattern)) {
+          //     this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
+          //   } else {
+          //     this.removeError(this.phone);
+          //   }
+          // },
+
+          // addError(el, msg) {
+          //   el.classList.add('invalid_field');
+          //   el.nextElementSibling.textContent = msg;
+          // },
+
+          // removeError(el) {
+          //   el.classList.remove('invalid_field');
+          //   el.nextElementSibling.textContent = '';
+          // },
+
+          handleValueAbsence(field) {
+            let labelText = document.querySelector('label[for=' + field.getAttribute('id') + ']').textContent;
+            let errorField = field.nextElementSibling;
+            let errorMsg = labelText + ' is a required field.';
+            field.classList.add('invalid_field');
+            errorField.textContent = errorMsg;
           },
 
-          checkName(n) {
-            if (n.value.length < 1) {
-              let val = n.id.split('name')[0];
-              val = val[0].toUpperCase() + val.slice(1);
-              let msg = `${val} name is a required field.`;
-              this.addError(n, msg);
-            } else {
-              this.removeError(n);
+          handlePatternMismatch(field) {
+            let labelText = document.querySelector('label[for=' + field.getAttribute('id') + ']').textContent;
+            let errorField = field.nextElementSibling;
+            let errorMsg = 'Please enter a valid ' + labelText + '.';
+            field.classList.add('invalid_field');
+            errorField.textContent = errorMsg;
+            if (field.getAttribute('id') === "password") {
+              errorField.textContent = 'Password must be at least 10 characters long.';
             }
           },
 
-          checkPass() {
-            if (this.password.value.length < 10) {
-              let msg = 'Password must be 10 characters or longer.';
-              this.addError(this.password, msg);
-            } else {
-              this.removeError(this.password);
+          validateInputs(field) {
+            if (field.validity.valueMissing) {
+              this.handleValueAbsence(field);
+            } else if (field.validity.patternMismatch) {
+              this.handlePatternMismatch(field);
             }
           },
 
-          checkEmail() {
-            if (this.email.validity.typeMismatch) {
-              this.addError(this.email, 'Email must be in the correct format.');
-            } else {
-              this.removeError(this.email);
+          handleFocusOut(e) {
+            let field = e.target;
+            if (this.form.checkValidity()) {
+              document.querySelector('.form_errors').textContent = '';
             }
+            this.validateInputs(field);
           },
 
-          checkPhone() {
-            let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
-            if (!this.phone.value.match(pattern)) {
-              this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
-            } else {
-              this.removeError(this.phone);
-            }
+          handleFocus(e) {
+
           },
 
-          addError(el, msg) {
-            el.classList.add('invalid_field');
-            el.nextElementSibling.textContent = msg;
-          },
+          handleFormSubmit(e) {
 
-          removeError(el) {
-            el.classList.remove('invalid_field');
-            el.nextElementSibling.textContent = '';
           },
 
           init() {
-            this.bindEvents();
+            this.input.forEach (input => {
+              input.addEventListener('focusout', this.handleFocusOut.bind(this));
+              input.addEventListener('focus', this.handleFocus.bind(this));
+            });
+            this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
           }
         }
 
@@ -153,16 +306,16 @@
 
       <fieldset>
         <label for="firstName">First name: </label>
-        <input type="text" name="firstName" id="firstname" required class=""><span class="error_message"></span><br>
+        <input type="text" name="firstName" id="firstName" required class=""><span class="error_message"></span><br>
         <label for="lastName">Last name: </label>
-        <input type="text" name="lastName" id="lastname" required class=""><span class="error_message"></span><br>
+        <input type="text" name="lastName" id="lastName" required class=""><span class="error_message"></span><br>
         <label for="email">Email: </label>
         <input type="email" name="email" id="email" pattern=".+@.+" required class=""><span class="error_message"></span><br>
         <label for="password">Password: </label>
-        <input type="password" name="password" id="password" required class=""><span class="error_message"></span><br>
+        <input type="password" name="password" id="password" required class="" pattern=".{10,}"><span class="error_message"></span><br>
         <label for="phone">Phone Number: </label>
-        <input type="tel" name="phone" id="phone" class=""><span class="error_message"></span><br>
-        <input type="submit" value="Sign Up">
+        <input type="tel" name="phone" id="phone" class="optional"><span class="error_message"></span><br>
+        <button type="submit" id="formsubmit" value="Sign Up">Submit</button>
       </fieldset>
     </form>
   </body>
