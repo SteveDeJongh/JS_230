@@ -192,7 +192,7 @@
           },
 
           handleValueAbsence(field) {
-            let labelText = document.querySelector('label[for=' + field.getAttribute('name') + ']').textContent;
+            let labelText = document.querySelector('label[for=' + field.dataset.errorName + ']').textContent;
             let errorField = this.getNextSpanFrom(field);
             let errorMsg = labelText + ' is a required field.';
             field.classList.add('invalid_field');
@@ -200,7 +200,7 @@
           },
 
           handlePatternMismatch(field) {
-            let labelText = document.querySelector('label[for=' + field.getAttribute('name') + ']').textContent;
+            let labelText = document.querySelector('label[for=' + field.dataset.errorName + ']').textContent;
             let errorField = this.getNextSpanFrom(field);
             let errorMsg = 'Please enter a valid ' + labelText + '.';
             field.classList.add('invalid_field');
@@ -252,6 +252,7 @@
             if (this.form.checkValidity()) {
               document.querySelector('.form_errors').textContent = "Form submitted successfully.";
               document.querySelector('.form_errors').classList.add('success');
+              this.submitForm();
             } else {
               document.querySelector('.form_errors').textContent = "Form cannnot be submitted until errors are corrected.";
               this.validateFormInputs();
@@ -272,11 +273,39 @@
           },
 
           autoTab(e) {
+            if (e.key === 'Tab' || e.key === 'Shift') {
+              return;
+            }
+
             if (e.target.value.length === 4) {
               e.preventDefault();
               let nextField = e.target.nextElementSibling;
               nextField.focus();
             }
+          },
+
+          backShift(e) {
+            if (e.key === 'Tab' && e.shiftKey) {
+              e.stopPropagation();
+            }
+          },
+
+          submitForm() {
+            let data = new FormData(this.form);
+
+            let dataObj = {credit_card: ''};
+            for (const [name, value] of data) { 
+              if (name.startsWith('credit_card')) {
+                dataObj['credit_card'] +=  value
+              } else {
+                dataObj[name] = encodeURIComponent(value);
+              }
+            };
+
+            let query = [];
+            Object.keys(dataObj).forEach(k => query.push(`${k}=${dataObj[k]}`));
+            let qstring = query.join('&');
+            document.querySelector('#formQueryString').textContent = qstring;
           },
 
           init() {
@@ -288,7 +317,8 @@
             document.querySelector('input[name=phone]').addEventListener('keypress', this.blockNonNumeric.bind(this));
 
             this.ccFields.forEach((ipt, idx) => {
-              ipt.addEventListener('keypress', this.blockNonNumeric.bind(this))
+              ipt.addEventListener('keypress', this.blockNonNumeric.bind(this));
+              ipt.addEventListener('keydown', this.backShift.bind(this));
 
               if (idx !== 3) {
                 ipt.addEventListener('keyup', this.autoTab.bind(this));
@@ -310,22 +340,32 @@
 
       <fieldset>
         <label for="firstName">First name </label>
-        <input type="text" name="firstName" id="firstName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+        <input value="aaaa" type="text" data-error-name="firstName" name="firstName" id="firstName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+
         <label for="lastName">Last name </label>
-        <input type="text" name="lastName" id="lastName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+        <input value="aaaa" type="text" data-error-name="lastName" name="lastName" id="lastName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+
         <label for="email">Email </label>
-        <input type="email" name="email" id="email" placeholder="name@address" pattern=".+@.+" required class=""><span class="error_message"></span><br>
+        <input value="a@aa" type="email" data-error-name="email" name="email" id="email" placeholder="name@address" pattern=".+@.+" required class=""><span class="error_message"></span><br>
+
         <label for="password">Password </label>
-        <input type="password" name="password" id="password" required class="" placeholder="123-123-1234" pattern=".{10,}"><span class="error_message"></span><br>
+        <input value="aaaabbbbcc" type="password" data-error-name="password" name="password" id="password" required class="" pattern=".{10,}"><span class="error_message"></span><br>
+
         <label for="phone">Phone Number </label>
-        <input type="tel" name="phone" id="phone" class="optional" pattern="\d+"><span class="error_message"></span><br>
+        <input value="1231231234" type="tel" data-error-name="phone" name="phone" id="phone" class="optional" placeholder="123-123-1234" pattern="\d{10}"><span class="error_message"></span><br>
+
         <label for="creditcard">Credit Card </label>
-        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
-        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
-        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
-        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required><span class="error_message"></span><br>
+        <input value="1111" type="text" maxlength="4" data-error-name="creditcard" name="credit_card1" id="cc1" class="creditCard" pattern="\d{4}" required>
+        <input value="2222" type="text" maxlength="4" data-error-name="creditcard" name="credit_card2" id="cc2" class="creditCard" pattern="\d{4}" required>
+        <input value="3333" type="text" maxlength="4" data-error-name="creditcard" name="credit_card3" id="cc3" class="creditCard" pattern="\d{4}" required>
+        <input value="4444" type="text" maxlength="4" data-error-name="creditcard" name="credit_card4" id="cc4" class="creditCard" pattern="\d{4}" required><span class="error_message"></span><br>
+
         <button type="submit" id="formsubmit" value="Sign Up">Submit</button>
       </fieldset>
     </form>
+    <div>
+      <h1>Serialized Form</h1>
+      <p id="formQueryString"></p>
+    </div>
   </body>
 </html>
