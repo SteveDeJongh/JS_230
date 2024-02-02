@@ -73,6 +73,10 @@
         color: green;
         border: 1px solid #52be43;
       }
+
+      .creditCard {
+        width: 60px;
+      }
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', e => {
@@ -173,88 +177,31 @@
 
         // formValidation.init();
 
-
         let formValidation = {
           form: document.querySelector('form'),
           input: document.querySelectorAll('input'),
+          ccFields: document.querySelectorAll('input[name=creditcard]'),
 
-          // submitForm(e) {
-          //   e.preventDefault();
-          //   if (this.allEntriesValid()) {
-          //     this.formStatus.textContent = 'Success, form submitted.';
-          //     this.formStatus.classList.remove('invalid_field');
-          //     this.formStatus.classList.add('success');
-          //   } else {
-          //     this.formStatus.classList.add('invalid_field');
-          //     this.formStatus.textContent = 'Error, please correct form information.';
-          //   }
-          // },
+          getNextSpanFrom(start) {
+            let el = start;
+            while (el.tagName !== 'SPAN') {
+              el = el.nextElementSibling;
+            }
 
-          // allEntriesValid() {
-          //   return Array.from(this.inputs).every(ipt => {
-          //     return (ipt.classList.contains('optional') && !ipt.classList.contains('invalid_field')) ||
-          //     (!ipt.classList.contains('invalid_field') && ipt.value.length > 0)
-          //   });
-          // },
-
-          // checkName(n) {
-          //   if (!n.checkValidity()) {
-          //     let val = n.id.split('name')[0];
-          //     val = val[0].toUpperCase() + val.slice(1);
-          //     let msg = `${val} name is a required field.`;
-          //     this.addError(n, msg);
-          //   } else {
-          //     this.removeError(n);
-          //   }
-          // },
-
-          // checkPass() {
-          //   if (!this.password.checkValidity()) {
-          //     let msg = 'Password must be 10 characters or longer.';
-          //     this.addError(this.password, msg);
-          //   } else {
-          //     this.removeError(this.password);
-          //   }
-          // },
-
-          // checkEmail() {
-          //   if (this.email.validity.typeMismatch || this.email.value.length <= 0) {
-          //     this.addError(this.email, 'Email must be in the correct format. "aaa@address"');
-          //   } else {
-          //     this.removeError(this.email);
-          //   }
-          // },
-
-          // checkPhone() {
-          //   let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
-          //   if (!this.phone.value.match(pattern)) {
-          //     this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
-          //   } else {
-          //     this.removeError(this.phone);
-          //   }
-          // },
-
-          // addError(el, msg) {
-          //   el.classList.add('invalid_field');
-          //   el.nextElementSibling.textContent = msg;
-          // },
-
-          // removeError(el) {
-          //   el.classList.remove('invalid_field');
-          //   el.nextElementSibling.textContent = '';
-          // },
+            return el;
+          },
 
           handleValueAbsence(field) {
-            let labelText = document.querySelector('label[for=' + field.getAttribute('id') + ']').textContent;
-            let errorField = field.nextElementSibling;
+            let labelText = document.querySelector('label[for=' + field.getAttribute('name') + ']').textContent;
+            let errorField = this.getNextSpanFrom(field);
             let errorMsg = labelText + ' is a required field.';
             field.classList.add('invalid_field');
             errorField.textContent = errorMsg;
           },
 
           handlePatternMismatch(field) {
-            let labelText = document.querySelector('label[for=' + field.getAttribute('id') + ']').textContent;
-            let errorField = field.nextElementSibling;
+            let labelText = document.querySelector('label[for=' + field.getAttribute('name') + ']').textContent;
+            let errorField = this.getNextSpanFrom(field);
             let errorMsg = 'Please enter a valid ' + labelText + '.';
             field.classList.add('invalid_field');
             errorField.textContent = errorMsg;
@@ -281,6 +228,17 @@
               document.querySelector('.form_errors').textContent = '';
             }
             this.validateInputs(field);
+            if (e.target.name === 'creditcard') {
+              this.handleCCstatus();
+            }
+          },
+
+          handleCCstatus() {
+            this.ccFields.forEach(field => {
+              if (field.classList.contains('invalid_field')) {
+                this.getNextSpanFrom(field).textContent = 'Error!';
+              }
+            })
           },
 
           handleFocus(e) {
@@ -292,7 +250,8 @@
           handleFormSubmit(e) {
             e.preventDefault();
             if (this.form.checkValidity()) {
-              document.querySelector('.form_errors').textContent = "";
+              document.querySelector('.form_errors').textContent = "Form submitted successfully.";
+              document.querySelector('.form_errors').classList.add('success');
             } else {
               document.querySelector('.form_errors').textContent = "Form cannnot be submitted until errors are corrected.";
               this.validateFormInputs();
@@ -306,10 +265,20 @@
             });
           },
 
+          blockNonNumeric(e) {
+            if (!e.key.match(/[-0-9]/)) {
+              e.preventDefault();
+            }
+          },
+
           init() {
             this.input.forEach (input => {
               input.addEventListener('focusout', this.handleFocusOut.bind(this));
               input.addEventListener('focus', this.handleFocus.bind(this));
+              this.ccFields.forEach(ipt => {
+                ipt.addEventListener('keypress', this.blockNonNumeric.bind(this))
+              });
+              document.querySelector('input[name=phone]').addEventListener('keypress', this.blockNonNumeric.bind(this));
             });
             this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
           }
@@ -320,20 +289,26 @@
     </script>
   </head>
   <body>
+    <h1>Sign up Form</h1>
     <form method="post" action="#" novalidate>
       <p class="form_errors"></p>
 
       <fieldset>
-        <label for="firstName">First name: </label>
-        <input type="text" name="firstName" id="firstName" required class=""><span class="error_message"></span><br>
-        <label for="lastName">Last name: </label>
-        <input type="text" name="lastName" id="lastName" required class=""><span class="error_message"></span><br>
-        <label for="email">Email: </label>
-        <input type="email" name="email" id="email" pattern=".+@.+" required class=""><span class="error_message"></span><br>
-        <label for="password">Password: </label>
-        <input type="password" name="password" id="password" required class="" pattern=".{10,}"><span class="error_message"></span><br>
-        <label for="phone">Phone Number: </label>
-        <input type="tel" name="phone" id="phone" class="optional"><span class="error_message"></span><br>
+        <label for="firstName">First name </label>
+        <input type="text" name="firstName" id="firstName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+        <label for="lastName">Last name </label>
+        <input type="text" name="lastName" id="lastName" required class="" pattern="[a-zA-Z']+"><span class="error_message"></span><br>
+        <label for="email">Email </label>
+        <input type="email" name="email" id="email" placeholder="name@address" pattern=".+@.+" required class=""><span class="error_message"></span><br>
+        <label for="password">Password </label>
+        <input type="password" name="password" id="password" required class="" placeholder="123-123-1234" pattern=".{10,}"><span class="error_message"></span><br>
+        <label for="phone">Phone Number </label>
+        <input type="tel" name="phone" id="phone" class="optional" pattern="\d+"><span class="error_message"></span><br>
+        <label for="creditcard">Credit Card </label>
+        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
+        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
+        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required>
+        <input type="text" maxlength="4" name="creditcard" id="creditcard" class="creditCard" pattern="\d{4}" required><span class="error_message"></span><br>
         <button type="submit" id="formsubmit" value="Sign Up">Submit</button>
       </fieldset>
     </form>
