@@ -236,7 +236,7 @@
           handleCCstatus() {
             this.ccFields.forEach(field => {
               if (field.classList.contains('invalid_field')) {
-                this.getNextSpanFrom(field).textContent = 'Error!';
+                this.getNextSpanFrom(field).textContent = 'Please enter a valid credit card.';
               }
             })
           },
@@ -271,15 +271,30 @@
             }
           },
 
+          autoTab(e) {
+            if (e.target.value.length === 4) {
+              e.preventDefault();
+              let nextField = e.target.nextElementSibling;
+              nextField.focus();
+            }
+          },
+
           init() {
             this.input.forEach (input => {
               input.addEventListener('focusout', this.handleFocusOut.bind(this));
               input.addEventListener('focus', this.handleFocus.bind(this));
-              this.ccFields.forEach(ipt => {
-                ipt.addEventListener('keypress', this.blockNonNumeric.bind(this))
-              });
-              document.querySelector('input[name=phone]').addEventListener('keypress', this.blockNonNumeric.bind(this));
             });
+
+            document.querySelector('input[name=phone]').addEventListener('keypress', this.blockNonNumeric.bind(this));
+
+            this.ccFields.forEach((ipt, idx) => {
+              ipt.addEventListener('keypress', this.blockNonNumeric.bind(this))
+
+              if (idx !== 3) {
+                ipt.addEventListener('keyup', this.autoTab.bind(this));
+              }
+            });
+
             this.form.addEventListener('submit', this.handleFormSubmit.bind(this));
           }
         }
