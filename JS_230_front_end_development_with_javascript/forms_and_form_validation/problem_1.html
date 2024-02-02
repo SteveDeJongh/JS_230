@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Form Validation, Part 1</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      h1 {
+        color: #fff;
+        font-size: 24px;
+        width: 800px;
+        margin: 70px auto 0 auto;
+      }
+      body {
+        background: #52be43;
+        font-size: 18px;
+      }
+
+      form {
+        width: 800px;
+        margin: 15px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 4px;
+      }
+
+      dt {
+        padding: 20px 0 5px 0;
+      }
+
+      input {
+        font-size: 18px;
+        width: 300px;
+        height: 38px;
+        padding: 3px 10px;
+        outline: none;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+
+      input:focus {
+        border: 1px solid #52be43;
+      }
+
+      .invalid_field {
+        border: 1px solid #a93333;
+      }
+
+      .error_message {
+        display: inline-block;
+        margin-left: 30px;
+      }
+
+      button {
+        margin-top: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        outline: none;
+        color: #fff;
+        padding: 5px 15px;
+        border-radius: 4px;
+        background: #52be43;
+        border: none;
+      }
+
+      .form_errors, .error_message {
+        color: #a93333;
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', e => {
+        let formValidation = {
+          firstName: document.querySelector('#firstname'),
+          lastName: document.querySelector('#lastname'),
+          email: document.querySelector('#email'),
+          password: document.querySelector('#password'),
+          phone: document.querySelector('#phone'),
+          inputs: document.querySelectorAll('input'),
+
+          bindEvents() {
+            this.firstName.addEventListener('focusout', this.checkName.bind(this, this.firstName));
+            this.lastName.addEventListener('focusout', this.checkName.bind(this, this.lastName));
+            this.password.addEventListener('focusout', this.checkPass.bind(this));
+            this.email.addEventListener('focusout', this.checkEmail.bind(this));
+            this.phone.addEventListener('focusout', this.checkPhone.bind(this));
+
+            this.inputs.forEach(input => {
+              input.addEventListener('focus', this.removeError.bind(this, input));
+            })
+          },
+
+          checkName(n) {
+            if (n.value.length < 1) {
+              let val = n.id.split('name')[0];
+              val = val[0].toUpperCase() + val.slice(1);
+              let msg = `${val} name is a required field.`;
+              this.addError(n, msg);
+            } else {
+              this.removeError(n);
+            }
+          },
+
+          checkPass() {
+            if (this.password.value.length < 10) {
+              let msg = 'Password must be 10 characters or longer.';
+              this.addError(this.password, msg);
+            } else {
+              this.removeError(this.password);
+            }
+          },
+
+          checkEmail() {
+            if (this.email.validity.typeMismatch) {
+              this.addError(this.email, 'Email must be in the correct format.');
+            } else {
+              this.removeError(this.email);
+            }
+          },
+
+          checkPhone() {
+            let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+            if (!this.phone.value.match(pattern)) {
+              this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
+            } else {
+              this.removeError(this.phone);
+            }
+          },
+
+          addError(el, msg) {
+            el.classList.add('invalid_field');
+            el.nextElementSibling.textContent = msg;
+          },
+
+          removeError(el) {
+            el.classList.remove('invalid_field');
+            el.nextElementSibling.textContent = '';
+          },
+
+          init() {
+            this.bindEvents();
+          }
+        }
+
+        formValidation.init();
+      });
+    </script>
+  </head>
+  <body>
+    <form method="post" action="#" novalidate>
+      <p class="form_errors"></p>
+
+      <fieldset>
+        <label for="firstName">First name: </label>
+        <input type="text" name="firstName" id="firstname" required class=""><span class="error_message"></span><br>
+        <label for="lastName">Last name: </label>
+        <input type="text" name="lastName" id="lastname" required class=""><span class="error_message"></span><br>
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email" pattern=".+@.+" required class=""><span class="error_message"></span><br>
+        <label for="password">Password: </label>
+        <input type="password" name="password" id="password" required class=""><span class="error_message"></span><br>
+        <label for="phone">Phone Number: </label>
+        <input type="tel" name="phone" id="phone" class=""><span class="error_message"></span><br>
+        <input type="submit" value="Sign Up">
+      </fieldset>
+    </form>
+  </body>
+</html>
