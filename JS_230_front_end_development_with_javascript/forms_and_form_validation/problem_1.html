@@ -266,9 +266,13 @@
           validateInputs(field) {
             if (field.validity.valueMissing) {
               this.handleValueAbsence(field);
+              return false;
             } else if (field.validity.patternMismatch) {
               this.handlePatternMismatch(field);
+              return false;
             }
+
+            return true;
           },
 
           handleFocusOut(e) {
@@ -280,11 +284,26 @@
           },
 
           handleFocus(e) {
-
+            let field = e.target;
+            field.nextElementSibling.textContent = '';
+            field.classList.remove('invalid_field');
           },
 
           handleFormSubmit(e) {
+            e.preventDefault();
+            if (this.form.checkValidity()) {
+              document.querySelector('.form_errors').textContent = "";
+            } else {
+              document.querySelector('.form_errors').textContent = "Form cannnot be submitted until errors are corrected.";
+              this.validateFormInputs();
+              return false;
+            }
+          },
 
+          validateFormInputs() {
+            this.input.forEach(input => {
+              this.validateInputs(input);
+            });
           },
 
           init() {
