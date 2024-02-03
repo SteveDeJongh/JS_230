@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Multiple Choice Quiz</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+    <script>
+      const questions = [
+        {
+          id: 1,
+          description: "Who is the author of <cite>The Hitchhiker's Guide to the Galaxy</cite>?",
+          options: ['Dan Simmons', 'Douglas Adams', 'Stephen Fry', 'Robert A. Heinlein'],
+        },
+        {
+          id: 2,
+          description: 'Which of the following numbers is the answer to Life, the \
+                        Universe and Everything?',
+          options: ['66', '13', '111', '42'],
+        },
+        {
+          id: 3,
+          description: 'What is Pan Galactic Gargle Blaster?',
+          options: ['A drink', 'A machine', 'A creature', 'None of the above'],
+        },
+        {
+          id: 4,
+          description: 'Which star system does Ford Prefect belong to?',
+          options: ['Aldebaran', 'Algol', 'Betelgeuse', 'Alpha Centauri'],
+        },
+      ];
+      
+      const answerKey = { '1': 'Douglas Adams', '2': '42', '3': 'A drink', '4': 'Betelgeuse' };
+      
+      document.addEventListener('DOMContentLoaded', e => {
+        let quiz_Template = document.querySelector('#question_template');
+        let quizTempFunc = Handlebars.compile(quiz_Template.innerHTML);
+        let fieldSet = document.querySelector('#quizForm > fieldset');
+        let submitButton = document.querySelector('#submit');
+        let resetButton = document.querySelector('#reset');
+        let form = document.querySelector('#quizForm');
+
+        fieldSet.insertAdjacentHTML('afterbegin', quizTempFunc({qGroup: questions}));
+
+        form.addEventListener('submit', e=> {
+          e.preventDefault();
+          let data = new FormData(form);
+          console.log(data);
+        });
+
+      })
+    </script>
+  </head>
+  <body>
+    <form id="quizForm" action="#" method="POST">
+      <fieldset>
+        <button id="submit" type="submit" name="submit">Submit</button>
+        <button id="reset" type="reset" name="reset">Reset</button>
+      </fieldset>
+    </form>
+  </body>
+
+  <script id="question_template" type="text/x-handlebars">
+    {{#each qGroup}}
+    <p id="question{{id}}">
+      <label for="{{id}}">{{{description}}}</label><br>
+      {{#each options}}
+        <input type="radio" value="{{this}}" name="answer_{{../id}}">
+        <label>{{this}}</label>
+      {{/each}}
+      <br>
+    </p>
+    {{/each}}
+  </script>
+
+</html>
