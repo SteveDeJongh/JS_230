@@ -59,12 +59,12 @@
 
             questions.forEach(q => {
               let questionAnswer = answers[q.id];
-              console.log(questionAnswer);
-
               if (answerKey[q.id] === questionAnswer) {
                 this.markCorrect(q)
+              } else if (!questionAnswer) {
+                this.markIncorrect(q, `You did not answer the question. The correct answer is: ${answerKey[q.id]}.`);
               } else {
-                this.markIncorrect(q, answerKey[q.id])
+                this.markIncorrect(q, `That is incorrect. The correct answer is: ${answerKey[q.id]}.`);
               }
             })
           },
@@ -76,23 +76,42 @@
             span.textContent = "Correct Answer";
           },
 
-          markIncorrect(q, answer) {
+          markIncorrect(q, reason) {
             let span = q.querySelector(`#status${q.id}`);
 
             span.classList.add('incorrect');
-            span.textContent = `That is incorrect. The correct answer is ${answer}.`;
+            span.textContent = reason;
+          },
+
+          resetQuestion(q) {
+            let span = q.querySelector(`#status${q.id}`);
+
+            span.classList.remove('correct');
+            span.classList.remove('incorrect');
+            span.textContent = '';
           },
 
           formSubmit(e) {
             e.preventDefault();
+            this.submitButton.disabled = true;
+
             let answers = this.formDataToHash(new FormData(this.form));
             
-            console.log(answers);
             this.updateQuestionStatus(answers);
+          },
+
+          formReset(e) {
+            let questions = document.querySelectorAll('.question');
+
+            questions.forEach(q => {
+              this.resetQuestion(q);
+            });
+            this.submitButton.disabled = false;
           },
 
           bindEvents() {
             this.form.addEventListener('submit', this.formSubmit.bind(this));
+            this.form.addEventListener('reset', this.formReset.bind(this));
           },
 
           init() {
@@ -117,21 +136,24 @@
     </style>
   </head>
   <body>
+    <h1>Multiple Choice Quiz</h1>
     <form id="quizForm" action="#" method="POST">
       <fieldset>
-        <button id="submit" type="submit" name="submit">Submit</button>
-        <button id="reset" type="reset" name="reset">Reset</button>
+
       </fieldset>
+      <button id="submit" type="submit" name="submit">Submit</button>
+      <button id="reset" type="reset" name="reset">Reset</button>
     </form>
   </body>
 
   <script id="question_template" type="text/x-handlebars">
     {{#each qGroup}}
     <p id="{{id}}" class="question">
-      <label for="{{id}}">{{{description}}}</label><br>
+      <label for="{{id}}">Q{{id}}. {{{description}}}</label><br>
       {{#each options}}
+        <label>  
         <input type="radio" value="{{this}}" name="answer_{{../id}}">
-        <label>{{this}}</label><br>
+        {{this}}</label><br>
       {{/each}}
       <br>
       <span id="status{{id}}" class=""></span><br>
