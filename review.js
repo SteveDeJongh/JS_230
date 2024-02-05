@@ -76,3 +76,28 @@
 //     y.style.background = 'red';
 //   }
 // });
+
+// function basicCallback(cb, num) {
+//   setTimeout(() => cb(num), 2000);
+// }
+
+// basicCallback((number) => {
+//   console.log(number * 2);
+// }, 5);
+
+// function downloadFile() {
+//   console.log('Downloading a file...');
+//   setTimeout(() => console.log('Download complete!'), 1500);
+// }
+
+// downloadFile();
+
+// function processData(arr, cb) {
+//   console.log('Working...');
+//   setTimeout(() => {
+//     let processed = arr.map(cb);
+//     console.log(processed);
+//   } , 1000);
+// }
+
+// processData([1, 2, 3], (number) => number * 2);
