@@ -17,3 +17,62 @@
 //   setTimeout(cb, time * 1000);
 // }
 
+// let counterID;
+// function startCounting() {
+//   let num = 1;
+//   counterID = setInterval(() => {
+//     console.log(num);
+//     num += 1;
+//   }, 1000);
+// }
+
+// function stopCounting() {
+//   clearInterval(counterID);
+// }
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   document.addEventListener('click', (e) => {
+//     let xPos = e.clientX;
+//     let yPos = e.clientY;
+  
+//     let x = document.querySelector('.x');
+//     x.style.top = String(yPos) + 'px';
+//     x.style.left = String(xPos) + 'px';    
+//   });
+// });
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   document.addEventListener('mousemove', (e) => {
+//     let xPos = e.clientX;
+//     let yPos = e.clientY;
+  
+//     let x = document.querySelector('.x');
+//     x.style.top = String(yPos) + 'px';
+//     x.style.left = String(xPos) + 'px';    
+//   });
+// });
+
+// document.addEventListener('mousemove', (e) => {
+//   let xPos = e.clientX;
+//   let yPos = e.clientY;
+
+//   let x = document.querySelector('.x');
+//   x.style.top = String(yPos) + 'px';
+//   x.style.left = String(xPos) + 'px';    
+// });
+
+// document.addEventListener('keydown', (e) => {
+//   let x = document.querySelector('.x .vertical');
+//   let y = document.querySelector('.x .horizontal');
+//   console.log(e.key);
+//   if (e.key === 'b') {
+//     x.style.background = 'blue';
+//     y.style.background = 'blue';
+//   } else if ( e.key === 'g') {
+//     x.style.background = 'green';
+//     y.style.background = 'green';
+//   } else if (e.key === 'r') {
+//     x.style.background = 'red';
+//     y.style.background = 'red';
+//   }
+// });
