@@ -382,31 +382,51 @@
 // // Logs fetched data, then "Resource fetch attempt made"
 // // On error, logs "Failed to load resource", then "Resource fetch attempt made"
 
-async function fetchUserProfile(userId) {
-  try {
-    const userProfile = await fetch(
-      `https://jsonplaceholder.typicode.com/users/${userId}`
-    ).then((res) => res.json());
-    console.log("User Profile", userProfile);
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-  }
+// async function fetchUserProfile(userId) {
+//   try {
+//     const userProfile = await fetch(
+//       `https://jsonplaceholder.typicode.com/users/${userId}`
+//     ).then((res) => res.json());
+//     console.log("User Profile", userProfile);
+//   } catch (error) {
+//     console.error("Error fetching profile:", error);
+//   }
 
-  try {
-    const userPosts = await fetch(
-      `https://jsonplaceholder.typicode.com/users/${userId}/posts`
-    ).then((res) => res.json());
-    console.log("User Posts", userPosts);
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-  }
+//   try {
+//     const userPosts = await fetch(
+//       `https://jsonplaceholder.typicode.com/users/${userId}/posts`
+//     ).then((res) => res.json());
+//     console.log("User Posts", userPosts);
+//   } catch (error) {
+//     console.error("Error fetching posts:", error);
+//   }
 
-  try {
-    const userComments = await fetch(
-      `https://jsonplaceholder.typicode.com/users/${userId}/comments`
-    ).then((res) => res.json());
-    console.log("User Comments", userComments);
-  } catch (error) {
-    console.error("Error fetching comments:", error);
-  }
-}
+//   try {
+//     const userComments = await fetch(
+//       `https://jsonplaceholder.typicode.com/users/${userId}/comments`
+//     ).then((res) => res.json());
+//     console.log("User Comments", userComments);
+//   } catch (error) {
+//     console.error("Error fetching comments:", error);
+//   }
+// }
+
+// Lesson 3 Review
+
+// web API book
+
+// let request = new XMLHttpRequest();
+// request.open('GET', 'https://api.github.com/repos/rails/rails');
+
+// request.addEventListener('load', e => {
+//   let data = JSON.parse(request.response);
+//   console.log(request.status);
+//   console.log(data.open_issues);
+// });
+
+// request.addEventListener('error', event => {
+//   console.log('The request could not be completed!');
+// });
+
+// request.send();
+
