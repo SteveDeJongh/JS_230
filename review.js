@@ -192,3 +192,221 @@
 //   .then((r) => r + 5)
 //   .then(console.log);
 
+// function flakyService() {
+//   return new Promise((resolve, reject) => {
+//     let num = Math.floor(Math.random() * 10);
+
+//     if ( num >= 5) {
+//       resolve('Operation success!')
+//     } else {
+//       reject('Operation failed.')
+//     }
+//   });
+// }
+
+// const services = [flakyService(), flakyService(), flakyService()];
+
+// Promise.allSettled(services).then((results) => {
+//   results.forEach((result, index) => {
+//     if (result.status === "fulfilled") {
+//       console.log(
+//         `Service ${index + 1} succeeded with message: ${result.value}`
+//       );
+//     } else {
+//       console.error(
+//         `Service ${index + 1} failed with error: ${result.reason}`
+//       );
+//     }
+//   });
+// });
+
+// Logs success message or error for each service
+
+// flakyService()
+//   .then((s) => console.log('Success! ' + s))
+//   .catch((e) => console.error('Operation failed.'));
+
+// function fetchUserData() {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => reject({ error: "User not found" }), 500);
+//   });
+// }
+
+// fetchUserData()
+//   .catch((e) => console.error(e.error))
+//   .then(() => console.log('Fetching complete.'));
+
+// function retryOperation(func) {
+//   let attempts = 0;
+
+//   function attempt() {
+//     return func().catch((err) => {
+//       if (attempts < 2) {
+//         attempts += 1;
+//         console.log(`Retry attempt #${attempts}`);
+//         return attempt();
+//       } else {
+//         throw err;
+//       }
+//     });
+//   }
+
+//   return attempt().catch(() => console.error('Operation failed'));
+// }
+
+// // Example usage:
+// retryOperation(
+//   () =>
+//     new Promise((resolve, reject) =>
+//       Math.random() > 0.33
+//         ? resolve("Success!")
+//         : reject(new Error("Fail!"))
+//     )
+// );
+
+// function loadData() {
+//   return new Promise((resolve, reject) => {
+//     if (Math.random > 0.5) {
+//       resolve('Data loaded.');
+//     } else {
+//       reject('Network error.');
+//     }
+//   }).catch((e) => {
+//     console.error(e);
+//     return Promise.resolve('Using cached data.');
+//   });
+// }
+
+// loadData()
+//   .then(console.log);
+
+// function loadMultipleResources(urls) {
+//   const fetchPromises = urls.map((url) =>
+//     fetch(url)
+//       .then((response) => response.json())
+//       .catch(() => "Failed to fetch")
+//   );
+//   return Promise.allSettled(fetchPromises);
+// }
+
+// loadMultipleResources([
+//   "https://jsonplaceholder.typicode.com/todos/1",
+//   "invalidUrl",
+// ]).then((results) => {
+//   results.forEach((result) => {
+//     if (result.status === "fulfilled") {
+//       console.log("Fetched data:", result.value);
+//     } else {
+//       console.error(result.reason);
+//     }
+//   });
+// });
+
+// Fetched data: {userId: 1, id: 1, title: 'delectus aut autem', completed: false }
+// Fetched data: Failed to fetch
+
+// function downloadFilePromise() {
+//   return new Promise((resolve, reject) => {
+//     console.log('Download starting...');
+//     setTimeout(() => {
+//       resolve('Download complete!');
+//     }, 1500);
+//   });
+// }
+
+// downloadFilePromise()
+//   .then((r) => console.log(r))
+//   .catch((e) => console.log('Error! ' + e));
+
+// async function asyncDownloadFile() {
+//   console.log('Download starting...');
+//   let status = await new Promise((resolve) => {
+//     setTimeout(() => {
+//       resolve('Download complete.')
+//     }, 1000);
+//   });
+//   console.log(status);
+// }
+
+// asyncDownloadFile();
+
+// function loadData() {
+//   return new Promise((resolve, reject) => {
+//     if (Math.random > 0.5) {
+//       resolve('Data loaded.');
+//     } else {
+//       reject('Network error.');
+//     }
+//   }).catch((e) => {
+//     console.error(e);
+//     return Promise.resolve('Using cached data.');
+//   });
+// }
+
+// loadData()
+//   .then(console.log);
+
+// async function asyncLoadData() {
+//   try {
+//     let result = await new Promise((resolve, reject) => {
+//       setTimeout(() => {
+//         if (Math.random() > 0.5) {
+//           resolve('Data loaded.');
+//         } else {
+//           reject('Network error.');
+//         } 
+//       }, 1000)
+//     })
+//     console.log(result);
+//   } catch(e) {
+//     console.error(e);
+//   }
+// }
+
+// asyncLoadData();
+
+// async function fetchResource(url) {
+//   try {
+//     const response = await fetch(url);
+//     const data = await response.json();
+//     console.log(data);
+//   } catch(e) {
+//     console.error('Failed to load resource.')
+//   } finally {
+//     console.log('Resource fetch attempt made.')
+//   }
+// }
+
+// // Example usage:
+// fetchResource("https://jsonplaceholder.typicode.com/todos/1");
+// // Logs fetched data, then "Resource fetch attempt made"
+// // On error, logs "Failed to load resource", then "Resource fetch attempt made"
+
+async function fetchUserProfile(userId) {
+  try {
+    const userProfile = await fetch(
+      `https://jsonplaceholder.typicode.com/users/${userId}`
+    ).then((res) => res.json());
+    console.log("User Profile", userProfile);
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+  }
+
+  try {
+    const userPosts = await fetch(
+      `https://jsonplaceholder.typicode.com/users/${userId}/posts`
+    ).then((res) => res.json());
+    console.log("User Posts", userPosts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+
+  try {
+    const userComments = await fetch(
+      `https://jsonplaceholder.typicode.com/users/${userId}/comments`
+    ).then((res) => res.json());
+    console.log("User Comments", userComments);
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+  }
+}
