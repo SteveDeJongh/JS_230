@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1.0" />
     <link rel="stylesheet" href="site.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -41,8 +40,8 @@
         document.querySelector('#modal-layer').addEventListener('click', hideModal);
         document.querySelector('#modal a.close').addEventListener('click', hideModal);
         document.addEventListener('keyup', function(event) {
-          if (event.keyCode === 27) {
-            hideModal();
+          if (event.code === 'Escape') {
+            hideModal(event);
           }
         });
       });

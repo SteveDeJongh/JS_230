@@ -23,7 +23,7 @@
       (function groceryListManager() {
         class GroceryList {
           constructor(listContainerElement) {
-            this.list = document.querySelector('ul');
+            this.list = document.querySelector(listContainerElement);
           }
 
           addItem(name, quantity) {

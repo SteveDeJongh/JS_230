@@ -251,30 +251,30 @@ class Autocomplete {
         this.bestMatchIndex = null;
         this.draw();
         break;
-        case 'ArrowUp':
+      case 'ArrowUp':
+        event.preventDefault();
+        if (this.selectedIndex === null || this.selectedIndex === 0) {
+          this.selectedIndex = this.matches.length - 1;
+        } else {
+          this.selectedIndex -= 1;
+        }
+        this.bestMatchIndex = null;
+        this.draw();
+        break;
+      case 'Tab':
+        if (this.bestMatchIndex !== null && this.matches.length !== 0) {
+          this.input.value = this.matches[this.bestMatchIndex].name;
           event.preventDefault();
-          if (this.selectedIndex === null || this.selectedIndex === 0) {
-            this.selectedIndex = this.matches.length - 1;
-          } else {
-            this.selectedIndex -= 1;
-          }
-          this.bestMatchIndex = null;
-          this.draw();
-          break;
-        case 'Tab':
-          if (this.bestMatchIndex !== null && this.matches.length !== 0) {
-            this.input.value = this.matches[this.bestMatchIndex].name;
-            event.preventDefault();
-          }
-          this.reset();
-          break;
-        case 'Enter':
-          this.reset();
-          break;
-        case 'Escape':
-          this.input.value = this.previousValue;
-          this.reset();
-          break;
+        }
+        this.reset();
+        break;
+      case 'Enter':
+        this.reset();
+        break;
+      case 'Escape':
+        this.input.value = this.previousValue;
+        this.reset();
+        break;
     }
   }
 
