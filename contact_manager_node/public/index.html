@@ -13,14 +13,9 @@
       box-sizing: border-box;
     }
 
-    body {
-      width: 600px;
-      margin: 0 auto 0 auto;
-    }
-
     header {
       text-align: center;
-      background-color: blueviolet;
+      background-color: purple;
       color: white;
       padding: 20px;
     }
@@ -63,55 +58,69 @@
       display: none;
     }
 
+    .container {
+      width: 600px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .row {
+      border: 1px solid rgb(100, 99, 99);
+      border-radius: 4px;
+      background-color: rgb(230, 230, 230);
+      margin: 0 0 15px 0;
+      padding: 10px;
+    }
+
+    .new-contact-button {
+      margin: 0 50px;
+    }
+
+    .new-contact-button:hover {
+      background-color:purple;
+      color: white;
+      border-color: white;
+    }
+
+    #contact-search {
+      margin: 0 50px;
+      padding: 5px;
+    }
+
+    footer {
+      border-top: 1px solid lightgrey;
+    }
+
+    footer p {
+      display: block;
+      text-align: center;
+    }
+
   </style>
 </head>
 <body>
   <header>
     <h1>Contact Manager</h1>
-    <p>Some text...</p>
+    <p>Using Handlebar and Vanilla JS...</p>
   </header>
-  <div class="container">
-    <div class="add-search-options">
-      <a href="#" class="new-contact-button">Add Contact</a><br>
+  <div class="container" id="main-container">
+    <!-- <div class="row add-search-options">
+      <button class="new-contact-button">Add Contact</button>
       <input type="text" id="contact-search" placeholder="Search">
-    </div>
+    </div> -->
 
-    <div class="new-contact hide">
-      <h2>New Contact</h2>
-      <form>
-        <div>
-          <label>Full name:</label><br>
-          <input type="text" name="fullname">
-        </div>
-        <div>
-          <label for="email">Email address:</label><br>
-          <input type="email" name="email">
-        </div>
-        <div>
-          <label for="phonenumber">Phone Number:</label><br>
-          <input type="tel" name="phonenumber">
-        </div>
-        <div>
-          <label for="tags">Tags:</label><br>
-          <button>Work</button>
-          <button>School</button>
-          <button>Friend</button>
-        </div>
-        <div>
-          <button>Submit</button><br>
-          <button>Cancel</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="no-contacts hide">
+    <div class="row no-contacts hide">
       <p>No contacts, please create a contact to view a list.</p>
     </div>
 
-    <div class="contacts-container">
+    <div class="row contacts-container">
       <h2>Contacts</h2>
       <ul class="contact-list"></ul>
     </div>
+
+    <footer>
+      <p>Developped by Steve De Jongh</p>
+    </footer>
   </div>
 
   <script type="text/handlebars" id="contact_temp">
@@ -126,71 +135,97 @@
     <button>Delete</button>
   </script>
 
+  <script type="text/handlebars" id="new-contact-form">
+    <div class="row new-contact">
+      <h2>Create Contact</h2>
+      <form>
+        <div>
+          <label>Full name:</label>
+          <input type="text" name="fullname">
+        </div>
+        <div>
+          <label for="email">Email address:</label>
+          <input type="email" name="email">
+        </div>
+        <div>
+          <label for="phonenumber">Phone Number:</label>
+          <input type="tel" name="phonenumber">
+        </div>
+        <div>
+          <label for="tags">Tags:</label><br>
+          {{#each tags}}
+            <input type="checkbox" id="{{this}}" name="{{this}}" value="{{this}}">
+            <label for="{{this}}">{{this}}</label><br>
+          {{/each}}
+        </div>
+        <div>
+          <button>Cancel</button> <button>Submit</button><br>
+        </div>
+      </form>
+    </div>
+  </script>
+
   <script>
-    class Model {
+    class App {
       constructor() {
-        this.contacts = [];
+        this.container = document.querySelector('#main-container');
+        this.addSearch = null;
+        this.addContact = null;
+        this.tags = ['Work', 'School', 'Friend'];
+        this.newContactForm = null;
 
-        this.getContacts();
+        this.contacts = null;
+
       }
 
-      bindContactListChanged(callback) {
-        this.onContactListChanged = callback;
+      renderAddSearch() {
+        let container = document.createElement('div');
+        container.classList.add('row');
+        container.classList.add('add-search-options');
+        let button = document.createElement('button');
+        button.classList.add('new-contact-button');
+        button.textContent = 'Add Contact';
+        container.insertAdjacentElement('afterbegin', button);
+        let search = document.createElement('input');
+        search.setAttribute('type', 'text');
+        search.setAttribute('id', 'contact-search');
+        search.setAttribute('placeholder', 'Search');
+        container.insertAdjacentElement('beforeend', search);
+        this.container.insertAdjacentElement('afterbegin', container);
+        this.addSearch = container;
+        this.addContact = container.querySelector('button');
       }
 
-      comit(contacts) {
-        this.onContactListChanged(contacts);
+      bind() {
+        this.addContact.addEventListener('click', this.renderNewContactForm.bind(this));
+
       }
 
-      async getContacts() {
-        let response = await fetch('/api/contacts')
-        let data = await response.json();
-        this.contacts = data;
-        this.comit(this.contacts);
-      }
-    }
-
-    class View {
-      constructor() {
-        this.contactContainer = document.querySelector('.contacts-container')
-        this.contactList = document.querySelector('.contact-list');
-        this.noContacts = document.querySelector('.no-contacts');
+      renderNewContactForm(e) {
+        this.hideAllElements();
+        let formTemplate = Handlebars.compile(document.querySelector('#new-contact-form').innerHTML);
+        let form = formTemplate({tags: this.tags});
+        this.newContactForm = form;
+        this.container.insertAdjacentHTML('afterbegin', form);
       }
 
-      displayContacts(contacts) {
-        if (contacts.length >= 1) {
-          this.contactList.innerHTML = '';
-          this.contactList.classList.remove('hide');
-          this.noContacts.classList.add('hide');
-          let template = document.querySelector('#contact_temp');
-          let hTemp = Handlebars.compile(template.innerHTML);
-          contacts.forEach(contact => {
-            this.contactList.insertAdjacentHTML('beforeend', hTemp(contact));
-          });
-        } else {
-          this.contactList.classList.add('hide');
-          this.noContacts.classList.remove('hide');
-        }
+      hideAllElements() {
+        this.addSearch.classList.add('hide');
+        if (this.contacts) {
+          this.contacts.classList.add('hide');
+        };
       }
 
-    }
+      init() {
+        this.renderAddSearch();
+        this.bind();
 
-    class Controller{
-      constructor(model, view) {
-        this.model = model;
-        this.view = view;
-        debugger;
-        this.model.bindContactListChanged(this.onContactListChanged);
-        this.onContactListChanged(this.model.contacts);
-      }
-
-      onContactListChanged(contacts) {
-        this.view.displayContacts(contacts);
+        return this;
       }
 
     }
 
-    let app = new Controller(new Model(), new View());
+    let app = new App().init();
   </script>
 </body>
 </html>
