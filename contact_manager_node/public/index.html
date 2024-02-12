@@ -123,6 +123,16 @@
       background-color: purple;
     }
 
+    span {
+      display:inline-block;
+      color:red;
+      font-size: 1em;
+    }
+
+    .invalid_field {
+      border: 1px solid red;
+    }
+
   </style>
 </head>
 <body>
@@ -171,19 +181,21 @@
       <h2>Create Contact</h2>
       <form>
         <div>
-          <label>Full name:</label>
-          <input type="text" name="full_name" required pattern="[a-zA-Z']+[ ][a-zA-Z']+">
-          <span class="error_message"</span>
+          <label for="full_name">Full name:</label>
+          <input class="validate" type="text" name="full_name" required pattern="[a-zA-Z']+[ ].+"><br>
+          <span class="error_message" data-name="error-full_name"> </span>
         </div>
         <div>
           <label for="email">Email address:</label>
-          <input type="email" name="email" required>
-          <span class="error_message"</span>
+          <input class="validate" type="email" name="email" required 
+          pattern="^.+@.+[.].+$"><br>
+          <span class="error_message" data-name="error-email"> </span>
         </div>
         <div>
-          <label for="phonenumber">Phone Number:</label>
-          <input type="tel" name="phone_number" required>
-          <span class="error_message"</span>
+          <label for="phone_number">Phone Number:</label>
+          <input class="validate" type="tel" name="phone_number" required
+          pattern="^[0-9]{10}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
+          <span class="error_message" data-name="error-phone_number"> </span>
         </div>
         <div>
           <label for="tags">Tags:</label><br>
@@ -238,9 +250,52 @@
       bindFormEvents() {
         let cancel = this.newContactForm.querySelector('#form-cancel');
         let submit = this.newContactForm.querySelector('#form-submit');
+        let inputs = this.newContactForm.querySelectorAll('.validate');
         cancel.addEventListener('click', this.handleCancelForm.bind(this));
         submit.addEventListener('click', this.handleSubmitForm.bind(this));
-        this.newContactForm
+        inputs.forEach(input => {
+          input.addEventListener('focusout', this.handleFocusOut.bind(this));
+          input.addEventListener('focus', this.handleFocus.bind(this));
+        });
+      }
+
+      handleFocusOut(e) {
+        let field = e.target;
+        this.validateInputs(field);
+      }
+
+      handleFocus(e) {
+        let field = e.target;
+        let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
+        eSpan.textContent = " ";
+        field.classList.remove('invalid_field')
+      }
+
+      validateInputs(field) {
+        if (field.validity.valueMissing) {
+          this.handleValueAbsence(field);
+          return false;
+        } else if (field.validity.patternMismatch) {
+          this.handlePatternMisMatch(field);
+          return false;
+        }
+        return true;
+      }
+
+      handleValueAbsence(field) {
+        let labelText = document.querySelector("label[for='" + field.name + "']").textContent.replace(':', '');
+        let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
+        let eMsg = labelText + ' is a required field.';
+        eSpan.textContent = eMsg;
+        field.classList.add('invalid_field');
+      }
+
+      handlePatternMisMatch(field) {
+        let labelText = document.querySelector("label[for='" + field.name + "']").textContent.replace(':', '');
+        let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
+        let eMsg = "Please enter a valid " + labelText + ".";
+        eSpan.textContent = eMsg;
+        field.classList.add('invalid_field');
       }
 
       handleCancelForm(e) {
@@ -252,18 +307,33 @@
 
       handleSubmitForm(e) {
         e.preventDefault();
-        let formData = new FormData(this.newContactForm.querySelector('form'));
-        let dataObj = {tags: []};
-        for (const [k,v] of formData) {
-          if (k === 'tags') {
-            dataObj[k].push(v);
-          } else {
-            dataObj[k] = v;
+        if (this.newContactForm.querySelector('form').checkValidity()) {
+          let formData = new FormData(this.newContactForm.querySelector('form'));
+          let dataObj = {tags: []};
+          for (const [k,v] of formData) {
+            if (k === 'tags') {
+              dataObj[k].push(v);
+            } else {
+              dataObj[k] = v;
+            }
           }
-        }
-        dataObj.tags = dataObj.tags.join(',')
+          dataObj.tags = dataObj.tags.join(',')
 
-        this.submitFormToServer(dataObj);
+          this.submitFormToServer(dataObj);
+          this.hideAllElements();
+          this.addSearch.classList.remove('hide');
+        } else {
+          alert('Please fix form errors before submitting.');
+        }
+      }
+
+      resetFormErrors() {
+        let inputs = this.newContactForm.querySelectorAll('.validate');
+        let spans = this.newContactForm.querySelectorAll('span');
+        inputs.forEach((ipt, idx) => {
+          ipt.classList.remove('invalid_field');
+          spans[idx].textContent = ' ';
+        });
       }
 
       async submitFormToServer(data) {
@@ -281,6 +351,7 @@
         this.hideAllElements();
         if (this.newContactForm) {
           this.newContactForm.classList.remove('hide');
+          this.resetFormErrors();
         } else {
           let formTemplate = Handlebars.compile(document.querySelector('#new-contact-form').innerHTML);
           let form = formTemplate({tags: this.tags});
@@ -292,6 +363,9 @@
 
       hideAllElements() {
         this.addSearch.classList.add('hide');
+        if (this.newContactForm) {
+          this.newContactForm.classList.add('hide');
+        }
         if (this.contacts) {
           this.contacts.classList.add('hide');
         };
