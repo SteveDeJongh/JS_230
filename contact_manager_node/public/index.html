@@ -102,10 +102,6 @@
       text-align: center;
     }
 
-    /* input:invalid {
-      border-color: red;
-    } */
-
     input[type=checkbox] {
       appearance: none;
     }
@@ -137,6 +133,10 @@
       justify-content: left;
     }
 
+    h3 {
+      padding-bottom: 5px;
+    }
+
     li {
       background-color: lightgrey;
       border: 1px solid black;
@@ -146,6 +146,41 @@
       text-align: left;
       padding: 10px;
       margin: 15px;
+    }
+
+    dt {
+      font-weight: bold;
+      padding-bottom: 5px;
+    }
+
+    dl {
+      padding-bottom: 10px;
+    }
+
+    .contacts-btn {
+      border: 2px solid purple;
+      border-radius: 3px;
+    }
+
+    .contacts-btn:hover {
+      background-color: purple;
+      color: white;
+    }
+
+    .large-btn {
+      border: 2px solid purple;
+      border-radius: 5px;
+      margin-top: 10px;
+      padding: 10px 20px;
+    }
+
+    .large-btn:hover {
+      border: 2px solid purple;
+      border-radius: 5px;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: purple;
+      color:white;
     }
 
   </style>
@@ -173,6 +208,7 @@
         </ul>
       {{else}}
         <p>You have no contacts.</p>
+        <button id="clAddContact" class="large-btn">Add contacts</button>
       {{/if}}
     </div>
   </script>
@@ -186,8 +222,8 @@
         <dt>Email:</dt>
         <dd>{{email}}</dd>
       </dl>
-      <button id="edit_{{id}}">Edit</button>
-      <button id="delete_{{id}}">Delete</button>
+      <button class="contacts-btn" id="edit_{{id}}">Edit</button>
+      <button class="contacts-btn" id="delete_{{id}}">Delete</button>
     </li>
   </script>
 
@@ -220,7 +256,7 @@
           {{/each}}
         </div>
         <div>
-          <button id="form-cancel">Cancel</button> <button id="form-submit">Submit</button><br>
+          <button class="large-btn" id="form-cancel">Cancel</button> <button class="large-btn" id="form-submit">Submit</button><br>
         </div>
       </form>
     </div>
@@ -249,13 +285,24 @@
         </div>
         <div>
           <label for="tags">Tags:</label><br>
-          {{#each tags}}
-            <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-            <label for="{{this}}">{{this}}</label>
-          {{/each}}
+          {{#if tags}}
+            {{#each tagOptions}}
+              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}"
+              {{#if (includes this)}}
+              checked
+              {{/if}}
+              >
+              <label for="{{this}}">{{this}}</label>
+            {{/each}}
+          {{else}}
+            {{#each tagOptions}}
+              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+              <label for="{{this}}">{{this}}</label>
+            {{/each}}
+          {{/if}}
         </div>
         <div>
-          <button id="edit-cancel">Cancel</button> <button id="edit-submit">Submit</button><br>
+          <button class="large-btn" id="edit-cancel">Cancel</button> <button class="large-btn" id="edit-submit">Submit</button><br>
         </div>
       </form>
     </div>
@@ -268,11 +315,12 @@
         this.container = document.querySelector('#main-container');
         this.addSearch = null;
         this.addContact = null;
-        this.tags = ['Work', 'School', 'Friend'];
+        this.tagOptions = ['Work', 'School', 'Friend'];
         this.newContactForm = null;
 
         this.contactsContainer = null;
         this.contacts = null;
+        this.filteredContacts = null;
         this.editContactForm = null;
 
       }
@@ -291,10 +339,14 @@
         let contactsTemplate = Handlebars.compile(document.querySelector('#contacts_temp').innerHTML);
         let contactLi = Handlebars.compile(document.querySelector('#contactLi').innerHTML);
         Handlebars.registerPartial('contactLi', document.querySelector('#contactLi').innerHTML)
-        let contacts = contactsTemplate({contacts: this.contacts});
+        let contacts = contactsTemplate({contacts: this.filteredContacts || this.contacts});
         this.addSearch.insertAdjacentHTML('afterend', contacts);
         this.contactsContainer = this.container.querySelector('.contacts-container');
         this.contactsContainer.addEventListener('click', this.handleContactsClick.bind(this));
+
+        if (this.contacts.length === 0) {
+          document.querySelector('#clAddContact').addEventListener('click', this.renderNewContactForm.bind(this));
+        }
       }
 
       handleContactsClick(e) {
@@ -312,7 +364,13 @@
       async editContact(id) {
         let editTemp = Handlebars.compile(document.querySelector('#edit-contact-form').innerHTML);
         let contact_data = await this.getContactData(id);
-        contact_data.tags = this.tags;
+        contact_data.tagOptions = this.tagOptions;
+        Handlebars.registerHelper('includes', function(value) {
+          let activeTags = contact_data.tags.split(',');
+          return activeTags.includes(value);
+        })
+        console.log(contact_data);
+
         let editForm = editTemp(contact_data);
         this.hideAllElements();
         this.container.insertAdjacentHTML('afterbegin', editForm);
@@ -410,11 +468,16 @@
         this.container.insertAdjacentElement('afterbegin', container);
         this.addSearch = container;
         this.addContact = container.querySelector('button');
+        this.search = container.querySelector('input');
       }
 
       bind() {
         this.addContact.addEventListener('click', this.renderNewContactForm.bind(this));
-
+        this.search.addEventListener('keyup', (e) => {
+          let query = e.target.value.toLowerCase();
+          this.filteredContacts = this.contacts.filter(contact => contact.full_name.toLowerCase().includes(query));
+          this.renderContacts();
+        })
       }
 
       // New Contact Form
@@ -526,7 +589,7 @@
           this.resetFormErrors();
         } else {
           let formTemplate = Handlebars.compile(document.querySelector('#new-contact-form').innerHTML);
-          let form = formTemplate({tags: this.tags});
+          let form = formTemplate({tags: this.tagOptions});
           this.container.insertAdjacentHTML('afterbegin', form);
           this.newContactForm = this.container.querySelector('.new-contact');
           this.bindFormEvents();
