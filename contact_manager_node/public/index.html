@@ -25,6 +25,11 @@
       font-size: 32px;
     }
 
+    h2 {
+      border-bottom: 1px solid lightgrey;
+      margin-bottom: 10px;
+    }
+
     header p {
       color: rgb(230, 207, 207);
       font-size: 18px;
@@ -70,6 +75,7 @@
       background-color: rgb(230, 230, 230);
       margin: 0 0 15px 0;
       padding: 10px;
+      text-align: center;
     }
 
     .new-contact-button {
@@ -96,6 +102,27 @@
       text-align: center;
     }
 
+    /* input:invalid {
+      border-color: red;
+    } */
+
+    input[type=checkbox] {
+      appearance: none;
+    }
+
+    input[type=checkbox] + label {
+      display: inline-block;
+      background-color: lightgrey;
+      border: 1px solid white;
+      padding: 5px;
+      margin: 5px;
+
+    }
+
+    input[type=checkbox]:checked + label {
+      background-color: purple;
+    }
+
   </style>
 </head>
 <body>
@@ -108,7 +135,11 @@
       <button class="new-contact-button">Add Contact</button>
       <input type="text" id="contact-search" placeholder="Search">
     </div> -->
-
+    <!-- <input type="text" name="full_name"
+    required
+    minlength="6"
+    pattern=".+[ ].+"
+    title="Please enter a space separated first and last name."> -->
     <div class="row no-contacts hide">
       <p>No contacts, please create a contact to view a list.</p>
     </div>
@@ -141,25 +172,28 @@
       <form>
         <div>
           <label>Full name:</label>
-          <input type="text" name="fullname">
+          <input type="text" name="full_name" required pattern="[a-zA-Z']+[ ][a-zA-Z']+">
+          <span class="error_message"</span>
         </div>
         <div>
           <label for="email">Email address:</label>
-          <input type="email" name="email">
+          <input type="email" name="email" required>
+          <span class="error_message"</span>
         </div>
         <div>
           <label for="phonenumber">Phone Number:</label>
-          <input type="tel" name="phonenumber">
+          <input type="tel" name="phone_number" required>
+          <span class="error_message"</span>
         </div>
         <div>
           <label for="tags">Tags:</label><br>
           {{#each tags}}
-            <input type="checkbox" id="{{this}}" name="{{this}}" value="{{this}}">
-            <label for="{{this}}">{{this}}</label><br>
+            <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+            <label for="{{this}}">{{this}}</label>
           {{/each}}
         </div>
         <div>
-          <button>Cancel</button> <button>Submit</button><br>
+          <button id="form-cancel">Cancel</button> <button id="form-submit">Submit</button><br>
         </div>
       </form>
     </div>
@@ -201,12 +235,59 @@
 
       }
 
+      bindFormEvents() {
+        let cancel = this.newContactForm.querySelector('#form-cancel');
+        let submit = this.newContactForm.querySelector('#form-submit');
+        cancel.addEventListener('click', this.handleCancelForm.bind(this));
+        submit.addEventListener('click', this.handleSubmitForm.bind(this));
+        this.newContactForm
+      }
+
+      handleCancelForm(e) {
+        e.preventDefault();
+        this.newContactForm.querySelector('form').reset();
+        this.newContactForm.classList.add('hide');
+        this.addSearch.classList.remove('hide');
+      }
+
+      handleSubmitForm(e) {
+        e.preventDefault();
+        let formData = new FormData(this.newContactForm.querySelector('form'));
+        let dataObj = {tags: []};
+        for (const [k,v] of formData) {
+          if (k === 'tags') {
+            dataObj[k].push(v);
+          } else {
+            dataObj[k] = v;
+          }
+        }
+        dataObj.tags = dataObj.tags.join(',')
+
+        this.submitFormToServer(dataObj);
+      }
+
+      async submitFormToServer(data) {
+        let request = new XMLHttpRequest();
+        request.open('POST', 'http://localhost:3000/api/contacts')
+        request.setRequestHeader('Content-type', 'application/json');
+        data = JSON.stringify(data);
+        request.addEventListener('load', (e) => {
+          console.log(request.response);
+        })
+        request.send(data);
+      }
+
       renderNewContactForm(e) {
         this.hideAllElements();
-        let formTemplate = Handlebars.compile(document.querySelector('#new-contact-form').innerHTML);
-        let form = formTemplate({tags: this.tags});
-        this.newContactForm = form;
-        this.container.insertAdjacentHTML('afterbegin', form);
+        if (this.newContactForm) {
+          this.newContactForm.classList.remove('hide');
+        } else {
+          let formTemplate = Handlebars.compile(document.querySelector('#new-contact-form').innerHTML);
+          let form = formTemplate({tags: this.tags});
+          this.container.insertAdjacentHTML('afterbegin', form);
+          this.newContactForm = this.container.querySelector('.new-contact');
+          this.bindFormEvents();
+        }
       }
 
       hideAllElements() {
