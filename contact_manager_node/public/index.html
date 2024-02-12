@@ -133,6 +133,21 @@
       border: 1px solid red;
     }
 
+    ul {
+      justify-content: left;
+    }
+
+    li {
+      background-color: lightgrey;
+      border: 1px solid black;
+      border-radius: 5px;
+      display: inline-block;
+      width: 200px;
+      text-align: left;
+      padding: 10px;
+      margin: 15px;
+    }
+
   </style>
 </head>
 <body>
@@ -141,39 +156,39 @@
     <p>Using Handlebar and Vanilla JS...</p>
   </header>
   <div class="container" id="main-container">
-    <!-- <div class="row add-search-options">
-      <button class="new-contact-button">Add Contact</button>
-      <input type="text" id="contact-search" placeholder="Search">
-    </div> -->
-    <!-- <input type="text" name="full_name"
-    required
-    minlength="6"
-    pattern=".+[ ].+"
-    title="Please enter a space separated first and last name."> -->
-    <div class="row no-contacts hide">
-      <p>No contacts, please create a contact to view a list.</p>
-    </div>
-
-    <div class="row contacts-container">
-      <h2>Contacts</h2>
-      <ul class="contact-list"></ul>
-    </div>
-
     <footer>
       <p>Developped by Steve De Jongh</p>
     </footer>
   </div>
 
-  <script type="text/handlebars" id="contact_temp">
-    <h3>{{full_name}}</h3>
-    <dl>
-      <dt>Phone Number:</dt>
-      <dd>{{phone_number}}</dd>
-      <dt>Email:</dt>
-      <dd>{{email}}</dd>
-    </dl>
-    <button>Edit</button>
-    <button>Delete</button>
+  <script type="text/handlebars" id="contacts_temp">
+    <div class="row contacts-container">
+      <h2>Contacts</h2>
+      {{#if contacts}}
+        <p>Check out all these contacts!</p>
+        <ul class="contact-list">
+          {{#each contacts}}
+            {{>contactLi}}
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>You have no contacts.</p>
+      {{/if}}
+    </div>
+  </script>
+
+  <script type="text/handlebars" id="contactLi">
+    <li>
+      <h3>{{full_name}}</h3>
+      <dl>
+        <dt>Phone Number:</dt>
+        <dd>{{phone_number}}</dd>
+        <dt>Email:</dt>
+        <dd>{{email}}</dd>
+      </dl>
+      <button>Edit</button>
+      <button>Delete</button>
+    </li>
   </script>
 
   <script type="text/handlebars" id="new-contact-form">
@@ -220,8 +235,28 @@
         this.tags = ['Work', 'School', 'Friend'];
         this.newContactForm = null;
 
+        this.contactsContainer = null;
         this.contacts = null;
 
+      }
+
+      async getContacts() {
+        const response = await fetch('http://localhost:3000/api/contacts');
+        this.contacts =  await response.json();
+        this.renderContacts();
+      }
+
+      renderContacts() {
+        if (this.contactsContainer) {
+          this.contactsContainer.remove();
+        }
+
+        let contactsTemplate = Handlebars.compile(document.querySelector('#contacts_temp').innerHTML);
+        let contactLi = Handlebars.compile(document.querySelector('#contactLi').innerHTML);
+        Handlebars.registerPartial('contactLi', document.querySelector('#contactLi').innerHTML)
+        let contacts = contactsTemplate({contacts: this.contacts});
+        this.addSearch.insertAdjacentHTML('afterend', contacts);
+        this.contactsContainer = this.container.querySelector('.contacts-container');
       }
 
       renderAddSearch() {
@@ -246,6 +281,8 @@
         this.addContact.addEventListener('click', this.renderNewContactForm.bind(this));
 
       }
+
+      // New Contact Form
 
       bindFormEvents() {
         let cancel = this.newContactForm.querySelector('#form-cancel');
@@ -322,6 +359,8 @@
           this.submitFormToServer(dataObj);
           this.hideAllElements();
           this.addSearch.classList.remove('hide');
+          this.contactsContainer.classList.remove('hide');
+          this.getContacts();
         } else {
           alert('Please fix form errors before submitting.');
         }
@@ -366,14 +405,15 @@
         if (this.newContactForm) {
           this.newContactForm.classList.add('hide');
         }
-        if (this.contacts) {
-          this.contacts.classList.add('hide');
+        if (this.contactsContainer) {
+          this.contactsContainer.classList.add('hide');
         };
       }
 
       init() {
         this.renderAddSearch();
         this.bind();
+        this.contacts = this.getContacts();
 
         return this;
       }
