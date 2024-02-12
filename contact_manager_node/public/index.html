@@ -186,8 +186,8 @@
         <dt>Email:</dt>
         <dd>{{email}}</dd>
       </dl>
-      <button>Edit</button>
-      <button>Delete</button>
+      <button id="edit_{{id}}">Edit</button>
+      <button id="delete_{{id}}">Delete</button>
     </li>
   </script>
 
@@ -226,7 +226,43 @@
     </div>
   </script>
 
+  <script type="text/handlebars" id="edit-contact-form">
+    <div class="row edit-contact">
+      <h2>Edit Contact</h2>
+      <form data-id="{{id}}">
+        <div>
+          <label for="full_name">Full name:</label>
+          <input class="validate" type="text" name="full_name" required pattern="[a-zA-Z']+[ ].+" value="{{full_name}}"><br>
+          <span class="error_message" data-name="error-full_name"> </span>
+        </div>
+        <div>
+          <label for="email">Email address:</label>
+          <input class="validate" type="email" name="email" required 
+          pattern="^.+@.+[.].+$" value="{{email}}"><br>
+          <span class="error_message" data-name="error-email"> </span>
+        </div>
+        <div>
+          <label for="phone_number">Phone Number:</label>
+          <input class="validate" type="tel" name="phone_number" required
+          pattern="^[0-9]{10}|[0-9]{3}-[0-9]{3}-[0-9]{4}" value="{{phone_number}}"><br>
+          <span class="error_message" data-name="error-phone_number"> </span>
+        </div>
+        <div>
+          <label for="tags">Tags:</label><br>
+          {{#each tags}}
+            <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+            <label for="{{this}}">{{this}}</label>
+          {{/each}}
+        </div>
+        <div>
+          <button id="edit-cancel">Cancel</button> <button id="edit-submit">Submit</button><br>
+        </div>
+      </form>
+    </div>
+  </script>
+
   <script>
+    const URL = 'http://localhost:3000/api/';
     class App {
       constructor() {
         this.container = document.querySelector('#main-container');
@@ -237,11 +273,12 @@
 
         this.contactsContainer = null;
         this.contacts = null;
+        this.editContactForm = null;
 
       }
 
       async getContacts() {
-        const response = await fetch('http://localhost:3000/api/contacts');
+        const response = await fetch(URL + 'contacts');
         this.contacts =  await response.json();
         this.renderContacts();
       }
@@ -257,6 +294,104 @@
         let contacts = contactsTemplate({contacts: this.contacts});
         this.addSearch.insertAdjacentHTML('afterend', contacts);
         this.contactsContainer = this.container.querySelector('.contacts-container');
+        this.contactsContainer.addEventListener('click', this.handleContactsClick.bind(this));
+      }
+
+      handleContactsClick(e) {
+        if (e.target.tagName !== 'BUTTON') {
+          return;
+        }
+        let [action, id] = e.target.id.split('_');
+        if (action === 'edit') {
+          this.editContact(id);
+        } else if (action === 'delete') {
+          this.deleteContact(id);
+        }
+      }
+
+      async editContact(id) {
+        let editTemp = Handlebars.compile(document.querySelector('#edit-contact-form').innerHTML);
+        let contact_data = await this.getContactData(id);
+        contact_data.tags = this.tags;
+        let editForm = editTemp(contact_data);
+        this.hideAllElements();
+        this.container.insertAdjacentHTML('afterbegin', editForm);
+        this.editContactForm = this.container.querySelector('.edit-contact');
+        this.bindEditEvents();
+      }
+
+      bindEditEvents() {
+        let cancel = this.editContactForm.querySelector('#edit-cancel');
+        let submit = this.editContactForm.querySelector('#edit-submit');
+        let inputs = this.editContactForm.querySelectorAll('.validate');
+        cancel.addEventListener('click', this.handleCancelEdit.bind(this));
+        submit.addEventListener('click', this.handleSubmitEdit.bind(this));
+        inputs.forEach(input => {
+          input.addEventListener('focusout', this.handleFocusOut.bind(this));
+          input.addEventListener('focus', this.handleFocus.bind(this));
+        });
+      }
+
+      handleCancelEdit(e) {
+        e.preventDefault();
+        this.reset();
+      }
+
+      handleSubmitEdit(e) {
+        e.preventDefault();
+        let form = this.editContactForm.querySelector('form');
+        if (form.checkValidity()) {
+          let formData = new FormData(this.editContactForm.querySelector('form'));
+          let dataObj = {tags: []};
+          for (const [k,v] of formData) {
+            if (k === 'tags') {
+              dataObj[k].push(v);
+            } else {
+              dataObj[k] = v;
+            }
+          }
+          dataObj.tags = dataObj.tags.join(',')
+          dataObj.id = Number(form.dataset.id);
+
+          this.submitEditToServer(dataObj, dataObj.id);
+          this.hideAllElements();
+          this.editContactForm.querySelector('form').reset();
+          this.reset();
+        } else {
+          alert('Please fix form errors before submitting.');
+        }
+      }
+
+      async submitEditToServer(data, id) {
+        let request = new XMLHttpRequest();
+        request.open('PUT', URL + 'contacts/' + id);
+        request.setRequestHeader('Content-type', 'application/json');
+        data = JSON.stringify(data);
+        request.addEventListener('load', (e) => {
+          console.log(request.response);
+        })
+        request.send(data);
+      }
+
+      async getContactData(id) {
+        try {
+          let response = await fetch(URL + `contacts/${id}`);
+          let data = await response.json();
+          return data;
+        } catch (e) {
+          console.error('getContactData error: ' + e);
+        }
+      }
+
+      async deleteContact(id) {
+        try {
+          let response = await fetch(URL + `contacts/${id}`, {
+            method: 'DELETE',
+          });
+          this.getContacts();
+        } catch (e) {
+          console.log(e);
+        }
       }
 
       renderAddSearch() {
@@ -338,8 +473,7 @@
       handleCancelForm(e) {
         e.preventDefault();
         this.newContactForm.querySelector('form').reset();
-        this.newContactForm.classList.add('hide');
-        this.addSearch.classList.remove('hide');
+        this.reset();
       }
 
       handleSubmitForm(e) {
@@ -358,9 +492,8 @@
 
           this.submitFormToServer(dataObj);
           this.hideAllElements();
-          this.addSearch.classList.remove('hide');
-          this.contactsContainer.classList.remove('hide');
-          this.getContacts();
+          this.newContactForm.querySelector('form').reset();
+          this.reset();
         } else {
           alert('Please fix form errors before submitting.');
         }
@@ -377,7 +510,7 @@
 
       async submitFormToServer(data) {
         let request = new XMLHttpRequest();
-        request.open('POST', 'http://localhost:3000/api/contacts')
+        request.open('POST', URL + 'contacts')
         request.setRequestHeader('Content-type', 'application/json');
         data = JSON.stringify(data);
         request.addEventListener('load', (e) => {
@@ -408,6 +541,18 @@
         if (this.contactsContainer) {
           this.contactsContainer.classList.add('hide');
         };
+      }
+
+      reset() {
+        if (this.newContactForm) {
+          this.newContactForm.classList.add('hide');
+        }
+        if (this.editContactForm) {
+          this.editContactForm.classList.add('hide');
+        }
+        this.addSearch.classList.remove('hide');
+        this.contactsContainer.classList.remove('hide');
+        this.getContacts();
       }
 
       init() {
