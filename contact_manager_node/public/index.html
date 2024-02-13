@@ -25,11 +25,6 @@
       font-size: 32px;
     }
 
-    h2 {
-      border-bottom: 1px solid lightgrey;
-      margin-bottom: 10px;
-    }
-
     header p {
       color: rgb(230, 207, 207);
       font-size: 18px;
@@ -197,7 +192,6 @@
 
   <script type="text/handlebars" id="contacts_temp">
     <div class="row contacts-container">
-      <h2>Contacts</h2>
       {{#if contacts}}
         <ul class="contact-list">
           {{#each contacts}}
@@ -255,7 +249,7 @@
           {{/each}}
         </div>
         <div>
-          <button class="large-btn" id="form-cancel">Cancel</button> <button class="large-btn" id="form-submit">Submit</button><br>
+          <button class="large-btn cancel-btn" id="form-cancel">Cancel</button> <button class="large-btn submit-btn" id="form-submit">Submit</button><br>
         </div>
       </form>
     </div>
@@ -301,7 +295,7 @@
           {{/if}}
         </div>
         <div>
-          <button class="large-btn" id="edit-cancel">Cancel</button> <button class="large-btn" id="edit-submit">Submit</button><br>
+          <button class="large-btn cancel-btn" id="edit-cancel">Cancel</button> <button class="large-btn submit-btn" id="edit-submit">Submit</button><br>
         </div>
       </form>
     </div>
@@ -364,29 +358,16 @@
         let editTemp = Handlebars.compile(document.querySelector('#edit-contact-form').innerHTML);
         let contact_data = await this.getContactData(id);
         contact_data.tagOptions = this.tagOptions;
+        console.log(contact_data);
         Handlebars.registerHelper('includes', function(value) {
           let activeTags = contact_data.tags.split(',');
-          return activeTags.includes(value);
+          return activeTags.includes(value.toLowerCase());
         })
-        console.log(contact_data);
-
         let editForm = editTemp(contact_data);
         this.hideAllElements();
         this.container.insertAdjacentHTML('afterbegin', editForm);
         this.editContactForm = this.container.querySelector('.edit-contact');
-        this.bindEditEvents();
-      }
-
-      bindEditEvents() {
-        let cancel = this.editContactForm.querySelector('#edit-cancel');
-        let submit = this.editContactForm.querySelector('#edit-submit');
-        let inputs = this.editContactForm.querySelectorAll('.validate');
-        cancel.addEventListener('click', this.handleCancelEdit.bind(this));
-        submit.addEventListener('click', this.handleSubmitEdit.bind(this));
-        inputs.forEach(input => {
-          input.addEventListener('focusout', this.handleFocusOut.bind(this));
-          input.addEventListener('focus', this.handleFocus.bind(this));
-        });
+        this.bindEventsForForm(this.editContactForm, this.handleCancelEdit, this.handleSubmitEdit);
       }
 
       handleCancelEdit(e) {
@@ -407,7 +388,7 @@
               dataObj[k] = v;
             }
           }
-          dataObj.tags = dataObj.tags.join(',')
+          dataObj.tags = dataObj.tags.join(',').toLowerCase();
           dataObj.id = Number(form.dataset.id);
 
           this.submitEditToServer(dataObj, dataObj.id);
@@ -462,7 +443,7 @@
         let search = document.createElement('input');
         search.setAttribute('type', 'text');
         search.setAttribute('id', 'contact-search');
-        search.setAttribute('placeholder', 'Name Search');
+        search.setAttribute('placeholder', 'Search');
         container.insertAdjacentElement('beforeend', search);
         this.container.insertAdjacentElement('afterbegin', container);
         this.addSearch = container;
@@ -472,21 +453,30 @@
 
       bind() {
         this.addContact.addEventListener('click', this.renderNewContactForm.bind(this));
-        this.search.addEventListener('keyup', (e) => {
-          let query = e.target.value.toLowerCase();
-          this.filteredContacts = this.contacts.filter(contact => contact.full_name.toLowerCase().includes(query));
-          this.renderContacts();
-        })
+        this.search.addEventListener('keyup', this.searchForNameOrTag.bind(this));
+      }
+
+      searchForNameOrTag(e) {
+        let query = e.target.value.toLowerCase();
+        this.filteredContacts = this.contacts.filter(contact => {
+          if (contact.full_name.toLowerCase().includes(query)) {
+            return true;
+          }
+          if (contact.tags && contact.tags.toLowerCase().includes(query)) {
+            return true;
+          };
+        });
+        this.renderContacts();
       }
 
       // New Contact Form
 
-      bindFormEvents() {
-        let cancel = this.newContactForm.querySelector('#form-cancel');
-        let submit = this.newContactForm.querySelector('#form-submit');
-        let inputs = this.newContactForm.querySelectorAll('.validate');
-        cancel.addEventListener('click', this.handleCancelForm.bind(this));
-        submit.addEventListener('click', this.handleSubmitForm.bind(this));
+      bindEventsForForm(form, cancelMethod, submitMethod) {
+        let cancel = form.querySelector('.cancel-btn');
+        let submit = form.querySelector('.submit-btn');
+        let inputs = form.querySelectorAll('.validate');
+        cancel.addEventListener('click', cancelMethod.bind(this));
+        submit.addEventListener('click', submitMethod.bind(this));
         inputs.forEach(input => {
           input.addEventListener('focusout', this.handleFocusOut.bind(this));
           input.addEventListener('focus', this.handleFocus.bind(this));
@@ -550,7 +540,7 @@
               dataObj[k] = v;
             }
           }
-          dataObj.tags = dataObj.tags.join(',')
+          dataObj.tags = dataObj.tags.join(', ').toLowerCase();
 
           this.submitFormToServer(dataObj);
           this.hideAllElements();
@@ -591,7 +581,7 @@
           let form = formTemplate({tags: this.tagOptions});
           this.container.insertAdjacentHTML('afterbegin', form);
           this.newContactForm = this.container.querySelector('.new-contact');
-          this.bindFormEvents();
+          this.bindEventsForForm(this.newContactForm, this.handleCancelForm, this.handleSubmitForm );
         }
       }
 
