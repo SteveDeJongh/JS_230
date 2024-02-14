@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JS Object Refernece Vs Copying</title>
+  </head>
+  <body>
+    <script>
+      // let age = 100;
+      // let age2 = age;
+      // console.log(age, age2); // 100 100
+
+      // age = 200;
+      // console.log(age, age2); // 200 100
+
+      // let name = 'wes';
+      // let name2 = name;
+      // console.log(name, name2); // wes wes
+      // name = 'wesley';
+      // console.log(name, name2); // wesley wes
+
+      // const players = ['Wes', 'Sarah', 'Ryan', 'Poppy'];
+
+      // const team = players;
+
+      // console.log(players, team);
+
+      // const team2 = players.slice(); // creates a copy
+      // const team3 = [].concat(players); // also creates a copy.
+      // const team4 = [...players]; // also creates a copy.
+      // const team5 = Array.from(players); // another copy.
+
+      const person = {
+          name: 'Wes Bos',
+          age: 80
+      };
+
+      const captain = person; // same object.
+
+      const cap2 = Object.assign({}, person, { number: 99, age: 12}); // creates a copy, and adds/overwrites properties passed in as 3rd arg.
+
+      console.log(cap2);
+
+      const cap3 = {...person}; // another shallow copy.
+      console.log(cap3);
+
+      const wes = {
+          name: 'Wes',
+          age: 100,
+          social: {
+            twitter: '@wesbos',
+            facebook: 'wesbos.developer'
+          }
+      };
+
+      console.clear();
+      console.log(wes);
+
+      const dev = Object.assign({}, wes); // copy, but only 1 layer deep.
+      
+      let dev2 = JSON.parse(JSON.stringify(wes)); // "poor mans deep clone" way of doing a deep clone.
+
+    </script>
+  </body>
+</html>
