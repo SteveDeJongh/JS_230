@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JS events</title>
+    <style>
+      html {
+        box-sizing: border-box;
+      }
+      *, *:before, *:after { box-sizing: inherit; }
+
+      div {
+        width:100%;
+        padding:100px;
+      }
+
+      .one {
+        background: thistle;
+      }
+
+      .two {
+        background:mistyrose;
+      }
+
+      .three {
+        background:coral;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="one">
+      <div class="two">
+        <div class="three bee see">
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const divs = document.querySelectorAll('div');
+
+    function logText(e) {
+      e.stopPropagation();
+      console.log(this.classList.value);
+    }
+
+    divs.forEach(div => div.addEventListener('click', logText, {capture: false, once: true}));
+  </script>
+</html>
