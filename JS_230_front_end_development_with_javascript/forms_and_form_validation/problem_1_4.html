@@ -80,103 +80,6 @@
     </style>
     <script>
       document.addEventListener('DOMContentLoaded', e => {
-        // let formValidation = {
-        //   firstName: document.querySelector('#firstname'),
-        //   lastName: document.querySelector('#lastname'),
-        //   email: document.querySelector('#email'),
-        //   password: document.querySelector('#password'),
-        //   phone: document.querySelector('#phone'),
-        //   inputs: document.querySelectorAll('input'),
-        //   form: document.querySelector('form'),
-        //   formStatus: document.querySelector('.form_errors'),
-        //   button: document.querySelector('button'),
-
-        //   bindEvents() {
-        //     this.firstName.addEventListener('focusout', this.checkName.bind(this, this.firstName));
-        //     this.lastName.addEventListener('focusout', this.checkName.bind(this, this.lastName));
-        //     this.password.addEventListener('focusout', this.checkPass.bind(this));
-        //     this.email.addEventListener('focusout', this.checkEmail.bind(this));
-        //     this.phone.addEventListener('focusout', this.checkPhone.bind(this));
-        //     this.button.addEventListener('click', this.submitForm.bind(this));
-
-        //     this.inputs.forEach(input => {
-        //        input.addEventListener('focus', this.removeError.bind(this, input));
-        //     });
-        //   },
-
-        //   submitForm(e) {
-        //     e.preventDefault();
-        //     if (this.allEntriesValid()) {
-        //       this.formStatus.textContent = 'Success, form submitted.';
-        //       this.formStatus.classList.remove('invalid_field');
-        //       this.formStatus.classList.add('success');
-        //     } else {
-        //       this.formStatus.classList.add('invalid_field');
-        //       this.formStatus.textContent = 'Error, please correct form information.';
-        //     }
-        //   },
-
-        //   allEntriesValid() {
-        //     return Array.from(this.inputs).every(ipt => {
-        //       return (ipt.classList.contains('optional') && !ipt.classList.contains('invalid_field')) ||
-        //       (!ipt.classList.contains('invalid_field') && ipt.value.length > 0)
-        //     });
-        //   },
-
-        //   checkName(n) {
-        //     if (!n.checkValidity()) {
-        //       let val = n.id.split('name')[0];
-        //       val = val[0].toUpperCase() + val.slice(1);
-        //       let msg = `${val} name is a required field.`;
-        //       this.addError(n, msg);
-        //     } else {
-        //       this.removeError(n);
-        //     }
-        //   },
-
-        //   checkPass() {
-        //     if (!this.password.checkValidity()) {
-        //       let msg = 'Password must be 10 characters or longer.';
-        //       this.addError(this.password, msg);
-        //     } else {
-        //       this.removeError(this.password);
-        //     }
-        //   },
-
-        //   checkEmail() {
-        //     if (this.email.validity.typeMismatch || this.email.value.length <= 0) {
-        //       this.addError(this.email, 'Email must be in the correct format. "aaa@address"');
-        //     } else {
-        //       this.removeError(this.email);
-        //     }
-        //   },
-
-        //   checkPhone() {
-        //     let pattern = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
-        //     if (!this.phone.value.match(pattern)) {
-        //       this.addError(this.phone, "Phone must be in the 123-123-1234 format.");
-        //     } else {
-        //       this.removeError(this.phone);
-        //     }
-        //   },
-
-        //   addError(el, msg) {
-        //     el.classList.add('invalid_field');
-        //     el.nextElementSibling.textContent = msg;
-        //   },
-
-        //   removeError(el) {
-        //     el.classList.remove('invalid_field');
-        //     el.nextElementSibling.textContent = '';
-        //   },
-
-        //   init() {
-        //     this.bindEvents();
-        //   }
-        // }
-
-        // formValidation.init();
-
         let formValidation = {
           form: document.querySelector('form'),
           input: document.querySelectorAll('input'),
@@ -222,7 +125,7 @@
             return true;
           },
 
-          handleFocusOut(e) {
+          handleBlur(e) {
             let field = e.target;
             if (this.form.checkValidity()) {
               document.querySelector('.form_errors').textContent = '';
@@ -267,7 +170,13 @@
           },
 
           blockNonNumeric(e) {
-            if (!e.key.match(/[-0-9]/)) {
+            if (!e.key.match(/[-0-9]/) && e.key.length === 1 ) {
+              e.preventDefault();
+            }
+          },
+
+          blockNonAlpha(e) {
+            if (!e.key.match(/[a-zA-Z']/)) {
               e.preventDefault();
             }
           },
@@ -310,14 +219,16 @@
 
           init() {
             this.input.forEach (input => {
-              input.addEventListener('focusout', this.handleFocusOut.bind(this));
+              input.addEventListener('blur', this.handleBlur.bind(this));
               input.addEventListener('focus', this.handleFocus.bind(this));
             });
-
-            document.querySelector('input[name=phone]').addEventListener('keypress', this.blockNonNumeric.bind(this));
+            document.querySelectorAll('input[name*=Name]').forEach(input => {
+              input.addEventListener('keydown', this.blockNonAlpha.bind(this));
+            })
+            document.querySelector('input[name=phone]').addEventListener('keydown', this.blockNonNumeric.bind(this));
 
             this.ccFields.forEach((ipt, idx) => {
-              ipt.addEventListener('keypress', this.blockNonNumeric.bind(this));
+              ipt.addEventListener('keydown', this.blockNonNumeric.bind(this));
               ipt.addEventListener('keydown', this.backShift.bind(this));
 
               if (idx !== 3) {
@@ -355,12 +266,12 @@
         <input value="1231231234" type="tel" data-error-name="phone" name="phone" id="phone" class="optional" placeholder="123-123-1234" pattern="\d{10}"><span class="error_message"></span><br>
 
         <label for="creditcard">Credit Card </label>
-        <input value="1111" type="text" maxlength="4" data-error-name="creditcard" name="credit_card1" id="cc1" class="creditCard" pattern="\d{4}" required>
-        <input value="2222" type="text" maxlength="4" data-error-name="creditcard" name="credit_card2" id="cc2" class="creditCard" pattern="\d{4}" required>
-        <input value="3333" type="text" maxlength="4" data-error-name="creditcard" name="credit_card3" id="cc3" class="creditCard" pattern="\d{4}" required>
-        <input value="4444" type="text" maxlength="4" data-error-name="creditcard" name="credit_card4" id="cc4" class="creditCard" pattern="\d{4}" required><span class="error_message"></span><br>
+        <input value="1111" type="text" maxlength="4" data-error-name="creditcard" name="credit_card" id="cc1" class="creditCard" pattern="\d{4}" required>
+        <input value="2222" type="text" maxlength="4" data-error-name="creditcard" name="credit_card" id="cc2" class="creditCard" pattern="\d{4}" required>
+        <input value="3333" type="text" maxlength="4" data-error-name="creditcard" name="credit_card" id="cc3" class="creditCard" pattern="\d{4}" required>
+        <input value="4444" type="text" maxlength="4" data-error-name="creditcard" name="credit_card" id="cc4" class="creditCard" pattern="\d{4}" required><span class="error_message"></span><br>
 
-        <button type="submit" id="formsubmit" value="Sign Up">Submit</button>
+        <button type="submit" id="formsubmit">Sign Up</button>
       </fieldset>
     </form>
     <div>
