@@ -83,7 +83,7 @@
         let formValidation = {
           form: document.querySelector('form'),
           input: document.querySelectorAll('input'),
-          ccFields: document.querySelectorAll('input[name=creditcard]'),
+          ccFields: document.querySelectorAll('input[name=credit_card]'),
 
           getNextSpanFrom(start) {
             let el = start;
@@ -146,7 +146,8 @@
 
           handleFocus(e) {
             let field = e.target;
-            field.nextElementSibling.textContent = '';
+            let eSpan = this.getNextSpanFrom(field);
+            eSpan.textContent = '';
             field.classList.remove('invalid_field');
           },
 
@@ -190,6 +191,7 @@
               e.preventDefault();
               let nextField = e.target.nextElementSibling;
               nextField.focus();
+              nextField.setSelectionRange(0,4);
             }
           },
 
