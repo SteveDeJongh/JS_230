@@ -214,7 +214,7 @@
             };
 
             let query = [];
-            Object.keys(dataObj).forEach(k => query.push(`${k}=${dataObj[k]}`));
+            Object.keys(dataObj).forEach(k => query.push(`${encodeURIComponent(k)}=${dataObj[k]}`));
             let qstring = query.join('&');
             document.querySelector('#formQueryString').textContent = qstring;
           },
