@@ -19,7 +19,7 @@
     <p>Using Handlebars, and Vanilla JS</p>
   </header>
   <main>
-    <script type="text/handlebars" id="main-temp">
+    <script type="text/handlebars" id="home-temp">
       <div class="container">
         <div class="main-functions">
           <button class="large-btn btn add-contact">Add Contact</button>
@@ -62,75 +62,36 @@
       </div>
     </script>
 
-    <div class="container">
-      <div class="main-functions">
-        <button class="large-btn btn add-contact">Add Contact</button>
-        <input type="text" class="search-bar" placeholder="Search">
+    <script type="text/handlebars" id="add-contact-form-temp">
+      <div class="add-contact-form">
+        <h2>Create Contact</h2>
+        <form>
+          <label>Full name:</label>
+          <div class="form-field">
+            <input type="text" class="input-field"><br>
+            <span class="e-msg">Error!</span>
+          </div>
+          <label>Email address:</label>
+          <div class="form-field">
+            <input type="email" class="input-field"><br>
+            <span class="e-msg">Error!</span>
+          </div>
+          <label>Telephone number:</label>
+          <div class="form-field">
+            <input type="phone" class="input-field"><br>
+            <span class="e-msg">Error!</span>
+          </div>
+          <label>Tags:</label>
+          <div class="form-field">
+            <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+            <label for="{{this}}">{{this}}</label>
+          </div>
+          <button class="large-btn btn" type="submit">Submit</button>
+          <button class="large-btn btn" type="cancel">Cancel</button>
+        </form>
       </div>
-      <div class="contacts">
-        <ul class="contacts-list">
-          <li>
-            <h3>Steve</h3>
-            <dl>
-              <dt>Phone Number:</dt>
-              <dd>123-123-1234</dd>
-              <dt>Email:</dt>
-              <dd>steve@woo.com</dd>
-              <dt>Tags:</dt>
-              <dd>School</dd>
-            </dl>
-            <div class="contact-actions">
-              <button class="reg-btn btn">🖍️ Edit</button>
-              <button class="reg-btn btn">🗑️ Delete</button>
-            </div>
-          </li>
-          <!-- <li>
-            <h3>Steve</h3>
-            <dl>
-              <dt>Phone Number:</dt>
-              <dd>123-123-1234</dd>
-              <dt>Email:</dt>
-              <dd>steve@woo.com</dd>
-            </dl>
-            <div class="contact-actions">
-              <button class="reg-btn btn">🖍️ Edit</button>
-              <button class="reg-btn btn">🗑️ Delete</button>
-            </div>
-          </li>
-          <li>
-            <h3>Steve</h3>
-            <dl>
-              <dt>Phone Number:</dt>
-              <dd>123-123-1234</dd>
-              <dt>Email:</dt>
-              <dd>steve@woo.com</dd>
-            </dl>
-            <div class="contact-actions">
-              <button class="reg-btn btn">🖍️ Edit</button>
-              <button class="reg-btn btn">🗑️ Delete</button>
-            </div>
-          </li>
-          <li>
-            <h3>Steve</h3>
-            <dl>
-              <dt>Phone Number:</dt>
-              <dd>123-123-1234</dd>
-              <dt>Email:</dt>
-              <dd>steve@woo.com</dd>
-            </dl>
-            <div class="contact-actions">
-              <button class="reg-btn btn">🖍️ Edit</button>
-              <button class="reg-btn btn">🗑️ Delete</button>
-            </div>
-          </li> -->
-        </ul>
-      </div>
-      <div class="empty-contacts-holder">
-        <h2>There are no contacts to display.</h2>
-        <button class="large-btn btn add-contact">Add Contacts</button>
-      </div>
-    </div>
-    
+    </script>
+
     <div class="add-contact-form hide"> <!-- Temp Hide -->
       <h2>Create Contact</h2>
       <form>
