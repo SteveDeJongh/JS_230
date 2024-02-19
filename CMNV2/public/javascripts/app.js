@@ -34,18 +34,55 @@ class App {
   }
 
   bindHomePageEvents() {
-    let addContact = document.querySelector('.add-contact');
+    let addContactButtons = document.querySelectorAll('.add-contact');
 
-    addContact.addEventListener('click', this.renderAddContactForm.bind(this));
+    addContactButtons.forEach(button => {
+      button.addEventListener('click', this.renderAddContactForm.bind(this));
+    });
   }
 
   // Add contact form
   renderAddContactForm() {
     let html = this.addContactTemplate({tags: this.tags});
     this.main.innerHTML = html;
+    this.bindAddContactEvents();
   }
 
+  bindAddContactEvents() {
+    let submit = document.querySelector('button[type=submit]');
+    let cancel = document.querySelector('button[type=cancel]');
+    let inputs = document.querySelectorAll('.input-field');
+    submit.addEventListener('click', this.addContactFormSubmit.bind(this));
+    cancel.addEventListener('click', this.addContactFormCancel.bind(this));
+    inputs.forEach(input => {
+      input.addEventListener('focus', this.handleInputFocus);
+      input.addEventListener('blur', this.handleInputBlur);
+    });
+  }
 
+  addContactFormSubmit(e) {
+
+  }
+
+  addContactFormCancel(e) {
+    e.preventDefault();
+    this.init();
+  }
+
+  handleInputFocus(e) {
+    let field = e.target;
+    let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
+    eSpan.textContent = '';
+    eSpan.classList.remove('invalid');
+  }
+
+  handleInputBlur(e) {
+    let field = e.target;
+    let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
+    let eMsg = eSpan.dataset.fieldName + ' is a required field.';
+    eSpan.textContent = eMsg;
+    eSpan.classList.add('invalid');
+  }
 
   async init() {
     await this.renderHomePage();

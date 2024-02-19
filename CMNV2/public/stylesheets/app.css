@@ -158,3 +158,32 @@ form {
 .hide { /* Temp hide class */
   display: none;
 }
+
+.e-msg {
+  display: block;
+  height: 30px;
+  padding: 5px;
+}
+
+.e-msg.invalid {
+  border: 2px solid red;
+}
+
+input[type=checkbox] {
+  appearance: none;
+}
+
+input[type=checkbox] + label {
+  display: inline-block;
+  background-color: var(--light-grey);
+  border: 2px solid var(--main-purple);
+  border-radius: 3px;
+  padding: 5px 10px;
+  margin: 0 5px 10px 0;
+
+}
+
+input[type=checkbox]:checked + label {
+  background-color: var(--main-purple);
+  color: white;
+}

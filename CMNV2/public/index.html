@@ -68,57 +68,31 @@
         <form>
           <label>Full name:</label>
           <div class="form-field">
-            <input type="text" class="input-field"><br>
-            <span class="e-msg">Error!</span>
+            <input type="text" class="input-field" name="full_name" required><br>
+            <span class="e-msg" data-field-name="Full name" data-name="error-full_name"></span>
           </div>
           <label>Email address:</label>
           <div class="form-field">
-            <input type="email" class="input-field"><br>
-            <span class="e-msg">Error!</span>
+            <input type="email" class="input-field" name="email" required><br>
+            <span class="e-msg" data-field-name="Email" data-name="error-email"></span>
           </div>
           <label>Telephone number:</label>
           <div class="form-field">
-            <input type="phone" class="input-field"><br>
-            <span class="e-msg">Error!</span>
+            <input type="phone" class="input-field" name="phone_number" required><br>
+            <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
           </div>
           <label>Tags:</label>
           <div class="form-field">
-            <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-            <label for="{{this}}">{{this}}</label>
+            {{#each tags}}
+              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+              <label class="tag-btn" for="{{this}}">{{this}}</label>
+            {{/each}}
           </div>
           <button class="large-btn btn" type="submit">Submit</button>
           <button class="large-btn btn" type="cancel">Cancel</button>
         </form>
       </div>
     </script>
-
-    <div class="add-contact-form hide"> <!-- Temp Hide -->
-      <h2>Create Contact</h2>
-      <form>
-        <label>Full name:</label>
-        <div class="form-field">
-          <input type="text" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Email address:</label>
-        <div class="form-field">
-          <input type="email" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Telephone number:</label>
-        <div class="form-field">
-          <input type="phone" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Tags:</label>
-        <div class="form-field">
-          <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-          <label for="{{this}}">{{this}}</label>
-        </div>
-        <button class="large-btn btn" type="submit">Submit</button>
-        <button class="large-btn btn" type="cancel">Cancel</button>
-      </form>
-    </div>
 
     <div class="edit-contact-form hide"> <!-- Temp Hide -->
       <h2>Edit Contact</h2>
