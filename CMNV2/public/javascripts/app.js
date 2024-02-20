@@ -14,6 +14,9 @@ class App {
     this.addContactTemplate = Handlebars.compile(document.querySelector('#add-contact-form-temp').innerHTML);
     this.form;
 
+    // Edit-Cotnact Form
+    this.editContactTemplate = Handlebars.compile(document.querySelector('#edit-contact-form-temp').innerHTML);
+
     this.init();
   }
  
@@ -34,8 +37,6 @@ class App {
   
   async renderHomePage() {
     this.contacts = await this.tagsStringToArray(await this.fetchContactsData());
-    console.log(this.contacts);
-    console.log(this);
     let html = this.homeTemplate({contacts: this.contacts});
     this.main.innerHTML = html;
   }
@@ -43,6 +44,11 @@ class App {
   bindHomePageEvents() {
     let addContactButtons = document.querySelectorAll('.add-contact');
     let searchBar = document.querySelector('.search-bar');
+    let deleteButtons = document.querySelectorAll('.delete-contact');
+    let editButtons = document.querySelectorAll('.edit-contact');
+
+    deleteButtons.forEach(button => button.addEventListener('click', this.handleDeleteClick.bind(this)));
+    editButtons.forEach(button => button.addEventListener('click', this.handleEditClick.bind(this)));
 
     addContactButtons.forEach(button => {
       button.addEventListener('click', this.renderAddContactForm.bind(this));
@@ -51,6 +57,110 @@ class App {
     searchBar.addEventListener('keyup', this.searchBarInput.bind(this));
   }
 
+  // Edit Actions
+  async handleEditClick(e) {
+    let id = Number(e.target.dataset.contactId);
+    let contact = await this.fetchContactDataByID(id);
+    Handlebars.registerHelper('selected', function(tagName) {
+      return !!contact.tags.includes(tagName);
+    })
+    contact.tagOptions = this.tags;
+    this.main.innerHTML = this.editContactTemplate({contact: contact});
+    this.bindEditContactEvents()
+  }
+
+  async fetchContactDataByID(id) {
+    const response = await fetch(`http://localhost:3000/api/contacts/${id}`);
+    return await response.json();
+  }
+
+  bindEditContactEvents() {
+    let submit = document.querySelector('button[type=submit]');
+    let cancel = document.querySelector('button[type=cancel]');
+    let inputs = document.querySelectorAll('.input-field');
+    submit.addEventListener('click', this.editContactFormSubmit.bind(this));
+    cancel.addEventListener('click', this.editContactFormCancel.bind(this));
+    inputs.forEach(input => {
+      input.addEventListener('focus', this.handleInputFocus.bind(this));
+      input.addEventListener('blur', this.handleInputBlur.bind(this));
+    });
+  }
+
+  editContactFormCancel(e) {
+    e.preventDefault();
+    this.init();
+  }
+
+  async editContactFormSubmit(e) {
+    e.preventDefault();
+    let editForm = document.querySelector('form');
+    let id = Number(editForm.dataset.contactId);
+    if (editForm.checkValidity()) {
+      let formData = new FormData(editForm);
+      let dataObj = {tags: []};
+      for (const [k,v] of formData) {
+        if (k === 'tags') {
+          dataObj[k].push(v);
+        } else {
+          dataObj[k] = v;
+        }
+      }
+      dataObj.tags = dataObj.tags.join(',');
+      dataObj.id = id;
+  
+      let response = await this.submitEditContactData(dataObj);
+      if (response.status === 201) {
+        this.init();
+      } else {
+        alert('Failed to edit contact data.');
+      }
+    } else {
+      alert('Please correct form errors before submitting.')
+    }
+  }
+
+  async submitEditContactData(contactData) {
+    try {
+      const response = await fetch(`http://localhost:3000/api/contacts/${contactData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(contactData),
+      });
+      return response
+    } catch(e) {
+      console.error('Error: ', e);
+    }
+  }
+
+  // Delete Actions
+
+  async handleDeleteClick(e) {
+    let id = Number(e.target.dataset.contactId);
+    let name = this.contacts.filter(contact => contact.id === id)[0].full_name;
+    if (confirm(`Are you sure you want to delete ${name}?`)) {
+      let response = await this.deleteContact(id);
+      if (response.status === 204) {
+        this.init();
+      } else {
+        alert('Contact not found.');
+      }
+    } else {
+      console.log('Delete contact operations aborted.');
+    }
+  }
+
+  async deleteContact(id) {
+    try {
+      let response = await fetch(`http://localhost:3000/api/contacts/${id}`, {method: 'DELETE'});
+      return response;
+    } catch(e) {
+      console.log('Error: ', e);
+    }
+  }
+
+  // Search
   searchBarInput(e) {
     let contactList = document.querySelector('.contacts-list');
     let match = e.target.value;
@@ -132,6 +242,8 @@ class App {
     e.preventDefault();
     this.init();
   }
+
+  // Form validations
 
   handleInputFocus(e) {
     let field = e.target;
