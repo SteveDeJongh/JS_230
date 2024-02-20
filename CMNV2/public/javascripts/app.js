@@ -14,8 +14,11 @@ class App {
     this.addContactTemplate = Handlebars.compile(document.querySelector('#add-contact-form-temp').innerHTML);
     this.form;
 
-    // Edit-Cotnact Form
+    // Edit-Contact Form
     this.editContactTemplate = Handlebars.compile(document.querySelector('#edit-contact-form-temp').innerHTML);
+
+    // Tags
+    this.tagTemplate = Handlebars.compile(document.querySelector('#selected-tag-template').innerHTML);
 
     this.init();
   }
@@ -62,7 +65,11 @@ class App {
     let id = Number(e.target.dataset.contactId);
     let contact = await this.fetchContactDataByID(id);
     Handlebars.registerHelper('selected', function(tagName) {
-      return !!contact.tags.includes(tagName);
+      if (contact.tags) {
+        return !!contact.tags.includes(tagName);
+      } else {
+        return false;
+      }
     })
     contact.tagOptions = this.tags;
     this.main.innerHTML = this.editContactTemplate({contact: contact});
@@ -78,12 +85,15 @@ class App {
     let submit = document.querySelector('button[type=submit]');
     let cancel = document.querySelector('button[type=cancel]');
     let inputs = document.querySelectorAll('.input-field');
+    let newTagBtn = document.querySelector('button[type=button]');
+
     submit.addEventListener('click', this.editContactFormSubmit.bind(this));
     cancel.addEventListener('click', this.editContactFormCancel.bind(this));
     inputs.forEach(input => {
       input.addEventListener('focus', this.handleInputFocus.bind(this));
       input.addEventListener('blur', this.handleInputBlur.bind(this));
     });
+    newTagBtn.addEventListener('click', this.addTagHandler.bind(this));
   }
 
   editContactFormCancel(e) {
@@ -115,6 +125,8 @@ class App {
         alert('Failed to edit contact data.');
       }
     } else {
+      let inputs = editForm.querySelectorAll('input');
+      inputs.forEach(input => this.validateInput(input));
       alert('Please correct form errors before submitting.')
     }
   }
@@ -190,12 +202,15 @@ class App {
     let submit = document.querySelector('button[type=submit]');
     let cancel = document.querySelector('button[type=cancel]');
     let inputs = document.querySelectorAll('.input-field');
+    let newTagBtn = document.querySelector('button[type=button]');
+
     submit.addEventListener('click', this.addContactFormSubmit.bind(this));
     cancel.addEventListener('click', this.addContactFormCancel.bind(this));
     inputs.forEach(input => {
       input.addEventListener('focus', this.handleInputFocus.bind(this));
       input.addEventListener('blur', this.handleInputBlur.bind(this));
     });
+    newTagBtn.addEventListener('click', this.addTagHandler.bind(this));
   }
 
   async addContactFormSubmit(e) {
@@ -286,9 +301,34 @@ class App {
 
   async init() {
     await this.renderHomePage();
+    this.tags = this.populateTags.call(this, this.contacts);
     this.bindHomePageEvents();
 
     return this;
+  }
+
+  // tags
+
+  populateTags(contacts) {
+    let allTags = contacts.flatMap(contact => contact.tags ? contact.tags : []);
+    let tags = allTags.filter((tag, idx) => allTags.indexOf(tag) === idx);
+    return tags.length > 0 ? tags : ['work', 'friend', 'school']; // default tag options present if no contacts exist.
+  }
+
+  addTagHandler(e) {
+    let newTagVal = e.target.previousElementSibling.value.toLowerCase();
+    if (this.tags.includes(newTagVal)) {
+      alert('That tag already exists.');
+    } else {
+      this.tags.push(newTagVal);
+      this.addTagAndSelect(newTagVal);
+    }
+  }
+
+  addTagAndSelect(newTag) {
+    let tagField = document.querySelector('.tag-options');
+    let html = this.tagTemplate({tag: newTag});
+    tagField.insertAdjacentHTML('beforeend', html);
   }
 }
 

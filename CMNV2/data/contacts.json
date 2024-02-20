@@ -17,21 +17,28 @@
     "id": 3,
     "full_name": "Pete Hanson",
     "email": "ph@example.com",
-    "phone_number": "54321098761",
-    "tags": null
+    "phone_number": "5432109871",
+    "tags": ""
   },
   {
     "full_name": "Steven De Jongh",
     "phone_number": "5146990562",
     "email": "de.jongh.steve@gmail.com",
-    "tags": "school",
+    "tags": "nah",
     "id": 4
   },
   {
     "full_name": "Steven De Jongh",
     "phone_number": "5146990562",
     "email": "de.jongh.steve@gmail.com",
-    "tags": "school,work",
+    "tags": "nah,naher",
     "id": 5
+  },
+  {
+    "full_name": "Steven De Jongh",
+    "phone_number": "51469905621",
+    "email": "de.jongh.steve@gmail.com",
+    "tags": "",
+    "id": 6
   }
 ]

@@ -108,15 +108,22 @@
           </div>
           <label>Telephone number:</label>
           <div class="form-field">
-            <input type="phone" class="input-field" name="phone_number" required pattern="^[0-9]{10}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
+            <input type="phone" class="input-field" name="phone_number" required pattern="^[0-9]{10,11}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
             <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
           </div>
           <label>Tags:</label>
           <div class="form-field">
-            {{#each tags}}
-              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-              <label class="tag-btn" for="{{this}}">{{this}}</label>
-            {{/each}}
+            <div class='tag-options'>
+              {{#each tags}}
+                <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+                <label class="tag-btn" for="{{this}}">{{this}}</label>
+              {{/each}}
+            </div>
+            <div class="add-tag">
+              <input type="text" class="add-tag-input" name="tag_name" placeholder="New tag...">
+              <button class="reg-btn" type="button">Add</button>
+              <span class="e-msg" data-field-name="New Tag data-name="error-phone_number"></span>
+            </div>
           </div>
           <button class="large-btn btn" type="submit">Submit</button>
           <button class="large-btn btn" type="cancel">Cancel</button>
@@ -124,33 +131,10 @@
       </div>
     </script>
 
-    <div class="edit-contact-form hide"> <!-- Temp Hide -->
-      <h2>Edit Contact</h2>
-      <form>
-        <label>Full name:</label>
-        <div class="form-field">
-          <input type="text" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Email address:</label>
-        <div class="form-field">
-          <input type="email" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Telephone number:</label>
-        <div class="form-field">
-          <input type="phone" class="input-field"><br>
-          <span class="e-msg">Error!</span>
-        </div>
-        <label>Tags:</label>
-        <div class="form-field">
-          <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-          <label for="{{this}}">{{this}}</label>
-        </div>
-        <button class="large-btn btn" type="submit">Submit</button>
-        <button class="large-btn btn" type="cancel">Cancel</button>
-      </form>
-    </div>
+    <script type="text/handlebars" id="selected-tag-template">
+      <input type="checkbox" id="{{this.tag}}" name="tags" value="{{this.tag}}" checked>
+      <label class="tag-btn" for="{{this.tag}}">{{this.tag}}</label>
+    </script>
 
     <script type="text/handlebars" id="edit-contact-form-temp">
       <div class="edit-contact-form">
@@ -168,20 +152,28 @@
           </div>
           <label>Telephone number:</label>
           <div class="form-field">
-            <input type="phone" value="{{contact.phone_number}}" class="input-field" name="phone_number" required pattern="^[0-9]{10}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
+            <input type="phone" value="{{contact.phone_number}}" class="input-field" name="phone_number" required pattern="^[0-9]{10,11}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
             <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
           </div>
           <label>Tags:</label>
           <div class="form-field">
-            {{#each contact.tagOptions}}
-            {{#if (selected this)}}
-              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}" checked>
-              <label class="tag-btn" for="{{this}}">{{this}}</label>
-            {{else}}
-              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
-              <label class="tag-btn" for="{{this}}">{{this}}</label>
-            {{/if}}
-            {{/each}}
+
+            <div class='tag-options'>
+              {{#each contact.tagOptions}}
+                {{#if (selected this)}}
+                  <input type="checkbox" id="{{this}}" name="tags" value="{{this}}" checked>
+                  <label class="tag-btn" for="{{this}}">{{this}}</label>
+                {{else}}
+                  <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+                  <label class="tag-btn" for="{{this}}">{{this}}</label>
+                {{/if}}
+              {{/each}}
+            </div>
+            <div class="add-tag">
+              <input type="text" class="add-tag-input" name="tag_name" placeholder="New tag...">
+              <button class="reg-btn" type="button">Add</button>
+              <span class="e-msg" data-field-name="New Tag data-name="error-phone_number"></span>
+            </div>
           </div>
           <button class="large-btn btn" type="submit">Submit</button>
           <button class="large-btn btn" type="cancel">Cancel</button>
