@@ -1,6 +1,7 @@
 :root {
   --main-purple:#6f5499;
   --light-grey: #d5d5d5;
+  --grey: #bbbbbb;
 }
 
 * {
@@ -42,7 +43,7 @@ footer {
   display: flex;
   justify-content: space-evenly;
   background-color: var(--light-grey);
-  border: 1px solid #bbbbbb;
+  border: 1px solid var(--grey);
   border-radius: 5px;
   margin-bottom: 10px;
 }
@@ -59,7 +60,7 @@ footer {
 .search-bar {
   padding: 5px;
   border-radius: 5px;
-  border: 1px solid #bbbbbb;
+  border: 1px solid var(--grey);
 }
 
 .contacts-list {
@@ -75,7 +76,10 @@ footer {
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  border-bottom: 1px solid #bbbbbb;
+  border-bottom: 1px solid var(--grey);
+  max-width: 225px;
+  min-width: 225px;
+  word-wrap: break-word;
 }
 
 h3 {
@@ -89,6 +93,15 @@ dl {
 
 dt {
   font-weight: bold;
+}
+
+dd.contact-tag {
+  display: inline-block;
+  background-color: var(--light-grey);
+  border: 1px solid var(--grey);
+  border-radius: 3px;
+  padding: 3px;
+  margin: 3px;
 }
 
 .reg-btn {
@@ -111,7 +124,7 @@ dt {
   padding: 20px;
   text-align: center;
   background-color: var(--light-grey);
-  border: 1px solid #bbbbbb;
+  border: 1px solid var(--grey);
   border-radius: 5px;
   margin-bottom: 10px;
 }

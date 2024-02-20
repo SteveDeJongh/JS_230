@@ -181,12 +181,13 @@ class App {
   }
 
   filterContacts(query) {
+    query = query.toLowerCase();
     return this.contacts.filter(contact => {
       contact.tags = contact.tags || [];
-      return contact.full_name.includes(query) ||
-             contact.email.includes(query) ||
+      return contact.full_name.toLowerCase().includes(query) ||
+             contact.email.toLowerCase().includes(query) ||
              contact.phone_number.includes(query) ||
-             contact.tags.some(tag => tag.includes(query))
+             contact.tags.some(tag => tag.toLowerCase().includes(query))
     })
   }
 
