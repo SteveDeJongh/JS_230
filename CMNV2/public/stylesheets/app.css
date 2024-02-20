@@ -66,11 +66,14 @@ footer {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin-bottom: 50px;
 }
 
 .contacts-list > li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   padding: 20px;
   border-bottom: 1px solid #bbbbbb;
 }
@@ -99,6 +102,7 @@ dt {
 }
 
 .contact-actions {
+  bottom: 0px;
   display: flex;
   justify-content: space-between;
 }

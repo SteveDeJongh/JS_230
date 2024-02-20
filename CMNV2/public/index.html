@@ -30,21 +30,23 @@
             <ul class="contacts-list">
               {{#each contacts }}
               <li>
-                <h3>{{this.full_name}}</h3>
-                <dl>
-                  <dt>Phone Number:</dt>
-                  <dd>{{this.phone_number}}</dd>
-                  <dt>Email:</dt>
-                  <dd>{{this.email}}</dd>
-                  <dt>Tags:</dt>
-                  {{#if this.tags}}
-                    {{#each this.tags}}
-                      <dd>{{this}}</dd>
-                    {{/each}}
-                  {{else}}
-                  <div></div>
-                  {{/if}}
-                </dl>
+                <div>
+                  <h3>{{this.full_name}}</h3>
+                  <dl>
+                    <dt>Phone Number:</dt>
+                    <dd>{{this.phone_number}}</dd>
+                    <dt>Email:</dt>
+                    <dd>{{this.email}}</dd>
+                    <dt>Tags:</dt>
+                    {{#if this.tags}}
+                      {{#each this.tags}}
+                        <dd>{{this}}</dd>
+                      {{/each}}
+                    {{else}}
+                    <div></div>
+                    {{/if}}
+                  </dl>
+                </div>
                 <div class="contact-actions">
                   <button class="reg-btn btn">🖍️ Edit</button>
                   <button class="reg-btn btn">🗑️ Delete</button>
@@ -62,23 +64,51 @@
       </div>
     </script>
 
+    <script type="text/handlebars" id="contact-li-template">
+      {{#each contact}}
+        <li>
+          <div>
+            <h3>{{this.full_name}}</h3>
+            <dl>
+              <dt>Phone Number:</dt>
+              <dd>{{this.phone_number}}</dd>
+              <dt>Email:</dt>
+              <dd>{{this.email}}</dd>
+              <dt>Tags:</dt>
+              {{#if this.tags}}
+                {{#each this.tags}}
+                  <dd>{{this}}</dd>
+                {{/each}}
+              {{else}}
+              <div></div>
+              {{/if}}
+            </dl>
+          </div>
+          <div class="contact-actions">
+            <button class="reg-btn btn">🖍️ Edit</button>
+            <button class="reg-btn btn">🗑️ Delete</button>
+          </div>
+        </li>
+      {{/each}}
+    </script>
+
     <script type="text/handlebars" id="add-contact-form-temp">
       <div class="add-contact-form">
         <h2>Create Contact</h2>
         <form>
           <label>Full name:</label>
           <div class="form-field">
-            <input type="text" class="input-field" name="full_name" required><br>
+            <input type="text" class="input-field" name="full_name" required pattern="[a-zA-Z']+[ ].+"><br>
             <span class="e-msg" data-field-name="Full name" data-name="error-full_name"></span>
           </div>
           <label>Email address:</label>
           <div class="form-field">
-            <input type="email" class="input-field" name="email" required><br>
+            <input type="email" class="input-field" name="email" required pattern="^.+@.+[.].+$"><br>
             <span class="e-msg" data-field-name="Email" data-name="error-email"></span>
           </div>
           <label>Telephone number:</label>
           <div class="form-field">
-            <input type="phone" class="input-field" name="phone_number" required><br>
+            <input type="phone" class="input-field" name="phone_number" required pattern="^[0-9]{10}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
             <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
           </div>
           <label>Tags:</label>
