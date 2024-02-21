@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="/javascripts/jquery.js"></script>
+  <!-- <script src="/javascripts/jquery.js"></script> -->
   <script src="/javascripts/handlebars.js"></script>
   <link rel="stylesheet" href="stylesheets/whitespace-reset.css">
   <link rel="stylesheet" href="stylesheets/app.css">
@@ -26,6 +26,14 @@
           <input type="text" class="search-bar" placeholder="Search">
         </div>
         {{#if contacts}}
+          {{#if tags}}
+            <div class="main-page-tags"></br>
+            {{#each tags}}
+              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+              <label class="tag-btn" for="{{this}}">{{this}}</label>
+            {{/each}}
+            </div>
+          {{/if}}
           <div class="contacts">
             <ul class="contacts-list">
               {{#each contacts }}
@@ -58,7 +66,7 @@
         {{ else }}
           <div class="empty-contacts-holder">
             <h2>There are no contacts to display.</h2>
-            <button class="large-btn btn add-contact">Add Contacts</button>
+            <button class="large-btn btn add-contact">Add Contact</button>
           </div>
         {{/if}}
       </div>

@@ -4,7 +4,7 @@
     "full_name": "Naveed Fida",
     "email": "nf@example.com",
     "phone_number": "12345678901",
-    "tags": "work,friend"
+    "tags": "work"
   },
   {
     "id": 2,
@@ -17,21 +17,14 @@
     "id": 3,
     "full_name": "Pete Hanson",
     "email": "ph@example.com",
-    "phone_number": "5432109871",
-    "tags": ""
+    "phone_number": "54321098761",
+    "tags": null
   },
   {
     "full_name": "Steven De Jongh",
     "phone_number": "5146990562",
     "email": "de.jongh.steve@gmail.com",
-    "tags": "nah",
+    "tags": "asd,aaa",
     "id": 4
-  },
-  {
-    "full_name": "Steven De Jongh",
-    "phone_number": "5146990562",
-    "email": "de.jongh.steve@gmail.com",
-    "tags": "nah,naher",
-    "id": 5
   }
 ]

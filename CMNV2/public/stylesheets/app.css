@@ -38,7 +38,7 @@ footer {
   padding: 15px 0;
 }
 
-.main-functions {
+.main-functions, .main-page-tags {
   padding: 20px;
   display: flex;
   justify-content: space-evenly;
@@ -154,6 +154,10 @@ form > label {
   width: 100%;
 }
 
+input.invalid {
+  border: 2px solid red;
+}
+
 form > .large-btn {
   width: 100%;
 }
@@ -182,10 +186,6 @@ form {
   padding: 5px;
 }
 
-.e-msg.invalid {
-  border: 2px solid red;
-}
-
 input[type=checkbox] {
   appearance: none;
 }
@@ -196,11 +196,23 @@ input[type=checkbox] + label {
   border: 2px solid var(--main-purple);
   border-radius: 3px;
   padding: 5px 10px;
-  margin: 0 5px 10px 0;
 
 }
 
 input[type=checkbox]:checked + label {
   background-color: var(--main-purple);
   color: white;
+}
+
+div.tag-options {
+  padding: 15px 0;
+}
+
+.main-page-tags {
+  justify-content: flex-start;
+  margin-bottom: 0px;
+}
+
+.tag-btn {
+  margin-right: 10px;
 }
