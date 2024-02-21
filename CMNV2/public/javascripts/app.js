@@ -58,7 +58,7 @@ class App {
     let tagFilters = document.querySelectorAll('.main-page-tags input');
     tagFilters.forEach(button => button.addEventListener('click', this.tagSelection.bind(this)));
 
-    this.main.addEventListener('click', this.tagListener.bind(this));
+    this.contactsList.addEventListener('click', this.tagListener.bind(this));
   }
 
   async init() {
@@ -78,7 +78,6 @@ class App {
     let match = e.target.value;
     let filterResults = this.filterContactsForSearchBar(match);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
-    this.bindHomePageEvents();
   }
 
   filterContactsForSearchBar(query) {
@@ -112,7 +111,6 @@ class App {
     let tags = this.getFilterTags();
     let filterResults = this.filterContactsByTagSelection(tags);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
-    this.bindHomePageEvents();
   }
 
   filterContactsByTagSelection(tags) {
@@ -363,7 +361,7 @@ class App {
   populateTags(contacts) {
     let allTags = contacts.flatMap(contact => contact.tags ? contact.tags : []);
     let tags = allTags.filter((tag, idx) => allTags.indexOf(tag) === idx);
-    return tags.length > 0 ? tags : DEFAULT_TAGS; // default tag options present if no contacts exist.
+    return tags.length > 0 ? tags : DEFAULT_TAGS; // default tag options present if no contacts with tags exist.
   }
 
   addTagHandler(e) {
