@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <!-- <script src="/javascripts/jquery.js"></script> -->
   <script src="/javascripts/handlebars.js"></script>
   <link rel="stylesheet" href="stylesheets/whitespace-reset.css">
   <link rel="stylesheet" href="stylesheets/app.css">
@@ -27,7 +26,10 @@
         </div>
         {{#if contacts}}
           {{#if tags}}
-            <div class="main-page-tags"></br>
+            <div class="main-page-tags">
+              <div class="heading-container">
+                <h3>Filter Contacts by Tag</h3>
+              </div>
             {{#each tags}}
               <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
               <label class="tag-btn" for="{{this}}">{{this}}</label>

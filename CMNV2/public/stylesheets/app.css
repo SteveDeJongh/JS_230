@@ -41,6 +41,7 @@ footer {
 .main-functions, .main-page-tags {
   padding: 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-evenly;
   background-color: var(--light-grey);
   border: 1px solid var(--grey);
@@ -102,6 +103,11 @@ dd.contact-tag {
   border-radius: 3px;
   padding: 3px;
   margin: 3px;
+}
+
+dd.contact-tag:hover {
+  background-color: var(--grey);
+  border: 1px solid black;
 }
 
 .reg-btn {
@@ -215,4 +221,12 @@ div.tag-options {
 
 .tag-btn {
   margin-right: 10px;
+}
+
+.heading-container {
+  width: 100%;
+  margin-bottom: 5px;
+  border-bottom: 1px solid var(--grey);
+  display: flex;
+  justify-content: center;
 }

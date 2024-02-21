@@ -1,4 +1,5 @@
 const DEFAULT_TAGS = ['school', 'work', 'friend'];
+const HOST = 'http://localhost:3000';
 
 class App {
   constructor() {
@@ -11,6 +12,7 @@ class App {
         
     this.main = document.querySelector('main');
     this.contacts;
+    this.contactsList;
     this.form;
     this.tags;
 
@@ -19,7 +21,7 @@ class App {
  
   // Home Page
   async fetchContactsData() {
-    const response = await fetch('http://localhost:3000/api/contacts');
+    const response = await fetch(HOST + '/api/contacts');
     return await response.json();
   }
   
@@ -57,26 +59,11 @@ class App {
     this.main.addEventListener('click', this.tagListener.bind(this));
   }
 
-  tagSelection(e) {
-    let tagFilters = [...document.querySelectorAll('.main-page-tags input')];
-    let contactList = document.querySelector('.contacts-list');
-    let tags = tagFilters.filter(tag => tag.checked);
-    tags = tags.map(tag => tag.value)
-    let filterResults = this.filterByTagSelection(tags);
-    contactList.innerHTML = this.contactLITemplate({contact: filterResults});
-  }
-
-  filterByTagSelection(tags) {
-    return this.contacts.filter(contact => {
-      contact.tags = contact.tags || [];
-      return tags.every(tag => contact.tags.includes(tag));
-    });
-  }
-
   async init() {
     this.contacts = await this.tagsStringToArray(await this.fetchContactsData());
     this.tags = this.populateTags.call(this, this.contacts);
     await this.renderHomePage();
+    this.contactsList = document.querySelector('.contacts-list');
     this.bindHomePageEvents();
 
     return this;
@@ -84,10 +71,9 @@ class App {
 
   // Search Function
   searchBarInput(e) {
-    let contactList = document.querySelector('.contacts-list');
     let match = e.target.value;
     let filterResults = this.filterContacts(match);
-    contactList.innerHTML = this.contactLITemplate({contact: filterResults});
+    this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
   }
 
   filterContacts(query) {
@@ -99,6 +85,22 @@ class App {
              contact.phone_number.includes(query) ||
              contact.tags.some(tag => tag.toLowerCase().includes(query))
     })
+  }
+
+  // Filter Contacts by Tag
+  tagSelection(e) {
+    let tagFilters = [...document.querySelectorAll('.main-page-tags input')];
+    let tags = tagFilters.filter(tag => tag.checked);
+    tags = tags.map(tag => tag.value)
+    let filterResults = this.filterByTagSelection(tags);
+    this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
+  }
+
+  filterByTagSelection(tags) {
+    return this.contacts.filter(contact => {
+      contact.tags = contact.tags || [];
+      return tags.every(tag => contact.tags.includes(tag));
+    });
   }
 
   // Edit Contact Actions
@@ -118,7 +120,7 @@ class App {
   }
 
   async fetchContactDataByID(id) {
-    const response = await fetch(`http://localhost:3000/api/contacts/${id}`);
+    const response = await fetch(HOST + `/api/contacts/${id}`);
     return await response.json();
   }
 
@@ -137,11 +139,7 @@ class App {
     newTagBtn.addEventListener('click', this.addTagHandler.bind(this));
     
     let tagInput = document.querySelector('.add-tag-input');
-    tagInput.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter') return;
-      e.preventDefault();
-      newTagBtn.dispatchEvent(new Event('click'));
-    });
+    tagInput.addEventListener('keydown', this.addTagEnterListener.bind(this));
   }
 
   editContactFormCancel(e) {
@@ -173,7 +171,7 @@ class App {
 
   async submitEditContactData(contactData) {
     try {
-      const response = await fetch(`http://localhost:3000/api/contacts/${contactData.id}`, {
+      const response = await fetch(HOST + `/api/contacts/${contactData.id}`, {
         method: "PUT",
         headers: {
           "Content-type": "application/json",
@@ -205,14 +203,14 @@ class App {
 
   async deleteContact(id) {
     try {
-      let response = await fetch(`http://localhost:3000/api/contacts/${id}`, {method: 'DELETE'});
+      let response = await fetch(HOST + `/api/contacts/${id}`, {method: 'DELETE'});
       return response;
     } catch(e) {
       console.log('Error: ', e);
     }
   }
 
-  // Add contact form
+  // Add Contact Form
   renderAddContactForm() {
     let html = this.addContactTemplate({tags: this.tags});
     this.main.innerHTML = html;
@@ -235,11 +233,7 @@ class App {
     newTagBtn.addEventListener('click', this.addTagHandler.bind(this));
 
     let tagInput = document.querySelector('.add-tag-input');
-    tagInput.addEventListener('keydown', (e) => {
-      if (e.key !== 'Enter') return;
-      e.preventDefault();
-      newTagBtn.dispatchEvent(new Event('click'));
-    });
+    tagInput.addEventListener('keydown', this.addTagEnterListener.bind(this));
   }
 
   formatFormData(formData) {
@@ -276,7 +270,7 @@ class App {
 
   async submitNewContactData(contactData) {
     try {
-      const response = await fetch('http://localhost:3000/api/contacts/', {
+      const response = await fetch(HOST + '/api/contacts/', {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -295,7 +289,6 @@ class App {
   }
 
   // Form validations
-
   handleInputFocus(e) {
     let field = e.target;
     let eSpan = document.querySelector("span[data-name='" + 'error-' + field.name + "']");
@@ -334,7 +327,6 @@ class App {
   }
 
   // Tags
-
   populateTags(contacts) {
     let allTags = contacts.flatMap(contact => contact.tags ? contact.tags : []);
     let tags = allTags.filter((tag, idx) => allTags.indexOf(tag) === idx);
@@ -372,6 +364,14 @@ class App {
     }
     this.tagSelection();
   }
+
+  addTagEnterListener(e) {
+    let newTagBtn = document.querySelector('button[type=button]');
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    newTagBtn.dispatchEvent(new Event('click'));
+  }
+
 }
 
 let app = new App();

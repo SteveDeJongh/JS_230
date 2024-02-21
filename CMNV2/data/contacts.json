@@ -18,13 +18,6 @@
     "full_name": "Pete Hanson",
     "email": "ph@example.com",
     "phone_number": "54321098761",
-    "tags": null
-  },
-  {
-    "full_name": "Steven De Jongh",
-    "phone_number": "5146990562",
-    "email": "de.jongh.steve@gmail.com",
-    "tags": "asd,aaa",
-    "id": 4
+    "tags": ""
   }
 ]
