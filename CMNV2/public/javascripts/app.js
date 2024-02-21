@@ -13,6 +13,8 @@ class App {
     this.main = document.querySelector('main');
     this.contacts;
     this.contactsList;
+    this.searchBar;
+    this.filterTags;
     this.form;
     this.tags;
 
@@ -64,6 +66,8 @@ class App {
     this.tags = this.populateTags.call(this, this.contacts);
     await this.renderHomePage();
     this.contactsList = document.querySelector('.contacts-list');
+    this.searchBar = document.querySelector('.search-bar');
+    this.filterTags = document.querySelectorAll('.main-page-tags input');
     this.bindHomePageEvents();
 
     return this;
@@ -72,13 +76,29 @@ class App {
   // Search Function
   searchBarInput(e) {
     let match = e.target.value;
-    let filterResults = this.filterContacts(match);
+    let filterResults = this.filterContactsForSearchBar(match);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
+    this.bindHomePageEvents();
   }
 
-  filterContacts(query) {
+  filterContactsForSearchBar(query) {
     query = query.toLowerCase();
-    return this.contacts.filter(contact => {
+    let contacts = this.contacts;
+
+    if (this.anyTagSelected()) {
+      let tags = this.getFilterTags();
+      contacts = this.filterContactsByTagSelection(tags);
+    }
+
+    return this.filterContactsByQuery(contacts, query);
+  }
+
+  hasSearchQuery() {
+    return this.searchBar.value.length > 0;
+  }
+
+  filterContactsByQuery(contacts, query) {
+    return contacts.filter(contact => {
       contact.tags = contact.tags || [];
       return contact.full_name.toLowerCase().includes(query) ||
              contact.email.toLowerCase().includes(query) ||
@@ -87,20 +107,33 @@ class App {
     })
   }
 
-  // Filter Contacts by Tag
+  // Filter Contacts by Tag Selection
   tagSelection(e) {
-    let tagFilters = [...document.querySelectorAll('.main-page-tags input')];
-    let tags = tagFilters.filter(tag => tag.checked);
-    tags = tags.map(tag => tag.value)
-    let filterResults = this.filterByTagSelection(tags);
+    let tags = this.getFilterTags();
+    let filterResults = this.filterContactsByTagSelection(tags);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
+    this.bindHomePageEvents();
   }
 
-  filterByTagSelection(tags) {
-    return this.contacts.filter(contact => {
+  filterContactsByTagSelection(tags) {
+    let contacts = this.contacts;
+
+    if (this.hasSearchQuery()) {
+      let query = this.searchBar.value;
+      contacts = this.filterContactsByQuery(contacts, query); 
+    }
+
+    return contacts.filter(contact => {
       contact.tags = contact.tags || [];
       return tags.every(tag => contact.tags.includes(tag));
     });
+  }
+
+  getFilterTags() {
+    let tagFilters = [...document.querySelectorAll('.main-page-tags input')];
+    let tags = tagFilters.filter(tag => tag.checked);
+    tags = tags.map(tag => tag.value)
+    return tags;
   }
 
   // Edit Contact Actions
@@ -372,6 +405,9 @@ class App {
     newTagBtn.dispatchEvent(new Event('click'));
   }
 
+  anyTagSelected() {
+    return [...this.filterTags].some(tag => tag.checked === true);
+  }
 }
 
 let app = new App();
