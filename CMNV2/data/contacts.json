@@ -4,7 +4,7 @@
     "full_name": "Naveed Fida",
     "email": "nf@example.com",
     "phone_number": "12345678901",
-    "tags": "work"
+    "tags": "work,friend"
   },
   {
     "id": 2,
@@ -18,6 +18,13 @@
     "full_name": "Pete Hanson",
     "email": "ph@example.com",
     "phone_number": "54321098761",
-    "tags": ""
+    "tags": null
+  },
+  {
+    "full_name": "Gerald Undone",
+    "phone_number": "123-123-1234",
+    "email": "gerald@undone.com",
+    "tags": "sales",
+    "id": 4
   }
 ]

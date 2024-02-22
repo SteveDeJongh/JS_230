@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/javascripts/handlebars.js"></script>
+  <link rel="stylesheet" href="stylesheets/whitespace-reset.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+  <style>
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Contact Manager</h1>
+    <p>Using Handlebars, and Vanilla JS</p>
+  </header>
+  <main>
+    <script type="text/handlebars" id="home-temp">
+      <div class="container">
+        <div class="main-functions">
+          <button class="large-btn btn add-contact">Add Contact</button>
+          <input type="text" class="search-bar" placeholder="Search">
+        </div>
+        {{#if contacts}}
+          {{#if tags}}
+            <div class="main-page-tags">
+              <div class="heading-container">
+                <h3>Filter Contacts by Tag</h3>
+              </div>
+            {{#each tags}}
+              <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+              <label class="tag-btn" for="{{this}}">{{this}}</label>
+            {{/each}}
+            </div>
+          {{/if}}
+          <div class="contacts">
+            <ul class="contacts-list">
+              {{#each contacts }}
+              <li>
+                <div>
+                  <h3>{{this.full_name}}</h3>
+                  <dl>
+                    <dt>Phone Number:</dt>
+                    <dd>{{this.phone_number}}</dd>
+                    <dt>Email:</dt>
+                    <dd>{{this.email}}</dd>
+                    <dt>Tags:</dt>
+                    {{#if this.tags}}
+                      {{#each this.tags}}
+                        <dd class="contact-tag">{{this}}</dd>
+                      {{/each}}
+                    {{else}}
+                    <div></div>
+                    {{/if}}
+                  </dl>
+                </div>
+                <div class="contact-actions">
+                  <button class="reg-btn btn edit-contact" data-contact-id={{this.id}}>🖍️ Edit</button>
+                  <button class="reg-btn btn delete-contact" data-contact-id={{this.id}}>🗑️ Delete</button>
+                </div>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        {{ else }}
+          <div class="empty-contacts-holder">
+            <h2>There are no contacts to display.</h2>
+            <button class="large-btn btn add-contact">Add Contact</button>
+          </div>
+        {{/if}}
+      </div>
+    </script>
+
+    <script type="text/handlebars" id="contact-li-template">
+      {{#each contact}}
+        <li>
+          <div>
+            <h3>{{this.full_name}}</h3>
+            <dl>
+              <dt>Phone Number:</dt>
+              <dd>{{this.phone_number}}</dd>
+              <dt>Email:</dt>
+              <dd>{{this.email}}</dd>
+              <dt>Tags:</dt>
+              {{#if this.tags}}
+                {{#each this.tags}}
+                  <dd class="contact-tag">{{this}}</dd>
+                {{/each}}
+              {{else}}
+              <div></div>
+              {{/if}}
+            </dl>
+          </div>
+          <div class="contact-actions">
+            <button class="reg-btn btn edit-contact" data-contact-id={{this.id}}>🖍️ Edit</button>
+            <button class="reg-btn btn delete-contact" data-contact-id={{this.id}}>🗑️ Delete</button>
+          </div>
+        </li>
+      {{/each}}
+    </script>
+
+    <script type="text/handlebars" id="add-contact-form-temp">
+      <div class="add-contact-form">
+        <h2>Create Contact</h2>
+        <form>
+          <label>Full name:</label>
+          <div class="form-field">
+            <input type="text" class="input-field" name="full_name" required pattern="[a-zA-Z']+[ ].+"><br>
+            <span class="e-msg" data-field-name="Full name" data-name="error-full_name"></span>
+          </div>
+          <label>Email address:</label>
+          <div class="form-field">
+            <input type="email" class="input-field" name="email" required pattern="^.+@.+[.].+$"><br>
+            <span class="e-msg" data-field-name="Email" data-name="error-email"></span>
+          </div>
+          <label>Telephone number:</label>
+          <div class="form-field">
+            <input type="phone" class="input-field" name="phone_number" required pattern="^[0-9]{10,11}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
+            <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
+          </div>
+          <label>Tags:</label>
+          <div class="form-field">
+            <div class='tag-options'>
+              {{#each tags}}
+                <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+                <label class="tag-btn" for="{{this}}">{{this}}</label>
+              {{/each}}
+            </div>
+            <div class="add-tag">
+              <input type="text" class="add-tag-input" name="tag_name" placeholder="New tag...">
+              <button class="reg-btn" type="button">Add</button>
+              <span class="e-msg" data-field-name="New Tag data-name="error-phone_number"></span>
+            </div>
+          </div>
+          <button class="large-btn btn" type="submit">Submit</button>
+          <button class="large-btn btn" type="cancel">Cancel</button>
+        </form>
+      </div>
+    </script>
+
+    <script type="text/handlebars" id="selected-tag-template">
+      <input type="checkbox" id="{{this.tag}}" name="tags" value="{{this.tag}}" checked>
+      <label class="tag-btn" for="{{this.tag}}">{{this.tag}}</label>
+    </script>
+
+    <script type="text/handlebars" id="edit-contact-form-temp">
+      <div class="edit-contact-form">
+        <h2>Edit Contact</h2>
+        <form data-contact-id="{{contact.id}}">
+          <label>Full name:</label>
+          <div class="form-field">
+            <input type="text" value="{{contact.full_name}}" class="input-field" name="full_name" required pattern="[a-zA-Z']+[ ].+"><br>
+            <span class="e-msg" data-field-name="Full name" data-name="error-full_name"></span>
+          </div>
+          <label>Email address:</label>
+          <div class="form-field">
+            <input type="email" value="{{contact.email}}" class="input-field" name="email" required pattern="^.+@.+[.].+$"><br>
+            <span class="e-msg" data-field-name="Email" data-name="error-email"></span>
+          </div>
+          <label>Telephone number:</label>
+          <div class="form-field">
+            <input type="phone" value="{{contact.phone_number}}" class="input-field" name="phone_number" required pattern="^[0-9]{10,11}|[0-9]{3}-[0-9]{3}-[0-9]{4}"><br>
+            <span class="e-msg" data-field-name="Phone Number" data-name="error-phone_number"></span>
+          </div>
+          <label>Tags:</label>
+          <div class="form-field">
+
+            <div class='tag-options'>
+              {{#each contact.tagOptions}}
+                {{#if (selected this)}}
+                  <input type="checkbox" id="{{this}}" name="tags" value="{{this}}" checked>
+                  <label class="tag-btn" for="{{this}}">{{this}}</label>
+                {{else}}
+                  <input type="checkbox" id="{{this}}" name="tags" value="{{this}}">
+                  <label class="tag-btn" for="{{this}}">{{this}}</label>
+                {{/if}}
+              {{/each}}
+            </div>
+            <div class="add-tag">
+              <input type="text" class="add-tag-input" name="tag_name" placeholder="New tag...">
+              <button class="reg-btn" type="button">Add</button>
+              <span class="e-msg" data-field-name="New Tag data-name="error-phone_number"></span>
+            </div>
+          </div>
+          <button class="large-btn btn" type="submit">Submit</button>
+          <button class="large-btn btn" type="cancel">Cancel</button>
+        </form>
+      </div>
+    </script>
+
+  </main>
+  <footer>
+    <p>Developed by Steve De Jongh</p>
+  </footer>
+</body>
+<script src="/javascripts/app.js"></script>
+</html>

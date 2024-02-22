@@ -44,11 +44,8 @@ class App {
   bindHomePageEvents() {
     let addContactButtons = document.querySelectorAll('.add-contact');
     let searchBar = document.querySelector('.search-bar');
-    let deleteButtons = document.querySelectorAll('.delete-contact');
-    let editButtons = document.querySelectorAll('.edit-contact');
 
-    deleteButtons.forEach(button => button.addEventListener('click', this.handleDeleteClick.bind(this)));
-    editButtons.forEach(button => button.addEventListener('click', this.handleEditClick.bind(this)));
+    this.bindContactActions();
 
     addContactButtons.forEach(button => {
       button.addEventListener('click', this.renderAddContactForm.bind(this));
@@ -59,6 +56,14 @@ class App {
     tagFilters.forEach(button => button.addEventListener('click', this.tagSelection.bind(this)));
 
     this.contactsList.addEventListener('click', this.tagListener.bind(this));
+  }
+
+  bindContactActions() {
+    let deleteButtons = document.querySelectorAll('.delete-contact');
+    let editButtons = document.querySelectorAll('.edit-contact');
+
+    deleteButtons.forEach(button => button.addEventListener('click', this.handleDeleteClick.bind(this)));
+    editButtons.forEach(button => button.addEventListener('click', this.handleEditClick.bind(this)));
   }
 
   async init() {
@@ -78,6 +83,7 @@ class App {
     let match = e.target.value;
     let filterResults = this.filterContactsForSearchBar(match);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
+    this.bindContactActions();
   }
 
   filterContactsForSearchBar(query) {
@@ -111,6 +117,7 @@ class App {
     let tags = this.getFilterTags();
     let filterResults = this.filterContactsByTagSelection(tags);
     this.contactsList.innerHTML = this.contactLITemplate({contact: filterResults});
+    this.bindContactActions();
   }
 
   filterContactsByTagSelection(tags) {
@@ -228,7 +235,7 @@ class App {
         alert('Contact not found.');
       }
     } else {
-      console.log('Delete contact operations aborted.');
+      console.error('Delete contact operations aborted.');
     }
   }
 
@@ -237,7 +244,7 @@ class App {
       let response = await fetch(HOST + `/api/contacts/${id}`, {method: 'DELETE'});
       return response;
     } catch(e) {
-      console.log('Error: ', e);
+      console.error('Error: ', e);
     }
   }
 
