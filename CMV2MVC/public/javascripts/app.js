@@ -4,11 +4,11 @@ const HOST = 'http://localhost:3000';
 class App {
   constructor() {
     // Templates
-    this.homeTemplate = Handlebars.compile(document.querySelector('#home-temp').innerHTML);
-    this.contactLITemplate = Handlebars.compile(document.querySelector('#contact-li-template').innerHTML);
-    this.addContactTemplate = Handlebars.compile(document.querySelector('#add-contact-form-temp').innerHTML);
-    this.editContactTemplate = Handlebars.compile(document.querySelector('#edit-contact-form-temp').innerHTML);
-    this.tagTemplate = Handlebars.compile(document.querySelector('#selected-tag-template').innerHTML);
+    // this.homeTemplate = Handlebars.compile(document.querySelector('#home-temp').innerHTML);
+    // this.contactLITemplate = Handlebars.compile(document.querySelector('#contact-li-template').innerHTML);
+    // this.addContactTemplate = Handlebars.compile(document.querySelector('#add-contact-form-temp').innerHTML);
+    // this.editContactTemplate = Handlebars.compile(document.querySelector('#edit-contact-form-temp').innerHTML);
+    // this.tagTemplate = Handlebars.compile(document.querySelector('#selected-tag-template').innerHTML);
         
     this.main = document.querySelector('main');
     this.contacts;
@@ -27,19 +27,19 @@ class App {
   //   return await response.json();
   // }
   
-  tagsStringToArray(contacts) {
-    return contacts.map(contact => {
-      if (contact.tags) {
-        contact.tags = contact.tags.split(',');
-      }
-      return contact;
-    })
-  }
+  // tagsStringToArray(contacts) {
+  //   return contacts.map(contact => {
+  //     if (contact.tags) {
+  //       contact.tags = contact.tags.split(',');
+  //     }
+  //     return contact;
+  //   })
+  // }
   
-  async renderHomePage() {
-    let html = this.homeTemplate({tags: this.tags, contacts: this.contacts});
-    this.main.innerHTML = html;
-  }
+  // async renderHomePage() {
+  //   let html = this.homeTemplate({tags: this.tags, contacts: this.contacts});
+  //   this.main.innerHTML = html;
+  // }
 
   bindHomePageEvents() {
     let addContactButtons = document.querySelectorAll('.add-contact');
@@ -539,6 +539,7 @@ class Model {
 class View {
   constructor() {
     this.app = document.querySelector('main');
+    this.form;
     // this.app = this.getElement('body');
 
     // Templates
@@ -550,10 +551,77 @@ class View {
 
   }
 
+  // Home Page
   renderHomePage(tags, contacts) {
     let html = this.homeTemplate({tags, contacts});
     this.app.innerHTML = html;
+    this.bindHomePageEvents();
   }
+
+  bindHomePageEvents() {
+    let addContactButtons = document.querySelectorAll('.add-contact');
+    addContactButtons.forEach(button => {
+      button.addEventListener('click', this.renderAddContactForm.bind(this));
+    });
+
+    // let searchBar = document.querySelector('.search-bar');
+
+    // this.bindContactActions();
+
+    // searchBar.addEventListener('keyup', this.searchBarInput.bind(this));
+    // let tagFilters = document.querySelectorAll('.main-page-tags input');
+    // tagFilters.forEach(button => button.addEventListener('click', this.tagSelection.bind(this)));
+
+    // this.contactsList.addEventListener('click', this.tagListener.bind(this));
+  }
+
+  // bindContactActions() {
+  //   let deleteButtons = document.querySelectorAll('.delete-contact');
+  //   let editButtons = document.querySelectorAll('.edit-contact');
+
+  //   deleteButtons.forEach(button => button.addEventListener('click', this.handleDeleteClick.bind(this)));
+  //   editButtons.forEach(button => button.addEventListener('click', this.handleEditClick.bind(this)));
+  // }
+
+
+  // Add Contact Form
+
+  renderAddContactForm() {
+    let html = this.addContactTemplate({tags: this.tags});
+    this.app.innerHTML = html;
+    this.form = this.app.querySelector('form');
+    // this.bindAddContactEvents();
+  }
+
+  // bindAddContactEvents() {
+    // let submit = this.app.querySelector('button[type=submit]');
+    // let cancel = this.app.querySelector('button[type=cancel]');
+    // let inputs = this.app.querySelectorAll('.input-field');
+    // let newTagBtn = this.app.querySelector('button[type=button]');
+
+    // submit.addEventListener('click', this.addContactFormSubmit.bind(this));
+    // cancel.addEventListener('click', (e) => console.log(e) )//this.addContactFormCancel.bind(this));
+
+    // inputs.forEach(input => {
+    //   input.addEventListener('focus', this.handleInputFocus.bind(this));
+    //   input.addEventListener('blur', this.handleInputBlur.bind(this));
+    // });
+
+    // newTagBtn.addEventListener('click', this.addTagHandler.bind(this));
+
+    // let tagInput = this.app.querySelector('.add-tag-input');
+    // tagInput.addEventListener('keydown', this.addTagEnterListener.bind(this));
+  // }
+
+  bindAddContactCancel(handler) {
+    let cancel = this.app.querySelector('button[type=cancel]');
+    cancel.addEventListener('click', handler);
+  }
+
+  // addContactFormCancel(e) {
+  //   e.preventDefault();
+  //   this.renderHomePage(this.tags, this.contacts);
+  // }
 }
 
 class Controller{
@@ -561,16 +629,24 @@ class Controller{
     this.model = model;
     this.view = view;
 
+    // Initial home page set up
+
     this.model.fetchContactsData().then(_ => {
       this.model.populateTags();
+      this.renderHomePage(this.model.tags, this.model.contacts);
     })
 
-    // Render Home Page
-    this.renderHomePage(this.model.tags, this.model.contacts);
+    // Explicit Binding
+    this.view.bindAddContactCancel(this.handleAddContactCancel);
+
   }
 
   renderHomePage = (tags, contacts) => {
     this.view.renderHomePage(tags, contacts);
+  }
+
+  handleAddContactCancel = () => {
+    this.renderHomePage(this.model.tags, this.model.contacts)
   }
 }
 

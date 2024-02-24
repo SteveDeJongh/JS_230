@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test doc</title>
+  <style>
+    .d1 {
+      background-color: red;
+      height: 300px;
+      width: 300px;
+    }
+
+    .d2 {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 0;
+      margin: auto;
+      background-color: green;
+      opacity: 0;
+      /* transition-duration: 2s;
+      transition-property: opacity; */
+      transition: opacity 2s;
+      z-index: 5;
+      /* transition: height 1s; */
+    }
+
+    .show {
+      display: block;
+      height: 100px;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="d1">
+  </div>
+
+  <div class="d2"></div>
+
+</body>
+<script>
+  let d1 = document.querySelector('.d1');
+  let d2 = document.querySelector('.d2');
+  d1.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    let left = e.clientX;
+    let top = e.clientY;
+    d2.style.top = top + 'px';
+    d2.style.left = left + 'px';
+    d2.classList.add('show');
+  })
+
+  d1.addEventListener('click', (e) => {
+    d2.classList.remove('show');
+  })
+</script>
+</html>
